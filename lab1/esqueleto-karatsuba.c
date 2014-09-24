@@ -35,13 +35,29 @@ unsigned long DummyMult(uint nA, double A[],uint nB, double B[],double C[])
 // AA(x) = A0(x) + A1(x)
 // BB(x) = B0(x) + B1(x)
 // CC(x) = AA(x) * BB(x)
+
+void numSplitter(double a, double *high, double *low){
+	int i = 0;
+	double aux = a;
+	*high = a;
+	
+	for(i = 0 ; aux>1 ; i++){
+		aux = fmod(aux, 10);
+	}
+	i = i/2;
+	while(i>0){
+		*high = fmod(*high, 10);
+	}
+	*high = floor(*high);
+	*low = a - (*high * pow(10, i));
+}
+
 void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
 { 
-
-  /* REMOVER A LINHA ABAIXO E COLOCAR O CODIGO PELO METODO DE KARATSUBA */
-  DummyMult(n,A,n,B,C); 
-
-  return;
+	double A0, A1, B0, B1;
+	numSplitter(*A, &A1, &A0);
+	numSplitter(*B, &B1, &B0);
+	return;
 }
 
 
