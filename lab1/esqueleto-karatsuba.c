@@ -35,13 +35,71 @@ unsigned long DummyMult(uint nA, double A[],uint nB, double B[],double C[])
 // AA(x) = A0(x) + A1(x)
 // BB(x) = B0(x) + B1(x)
 // CC(x) = AA(x) * BB(x)
-void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
+
+void numSplitter(uint aux, double a, double *high, double *low){
+	/*
+	 * Quebra o número em dois blocos
+	 */
+	
+	uint i = aux;
+	*high = a;
+	
+	while(i>0){
+		*high = *high / 10;
+		i--;
+	}
+	*high = floor(*high);
+	*low = a - (*high * pow(10, aux));
+}
+
+
+uint numSplitFinder(double a){
+	/*
+	 * determina quantas casas o número possui
+	 */
+	
+	double aux = a;
+	int i = 0;
+	
+	for(i = 0 ; aux>1 ; i++){
+		aux = aux /10;
+	}
+	return i;
+}
+
+void RecursiveKaratsuba2(uint n, double *A, double *B, double *C)
 { 
+	if ((*A < 10) || (*B < 10)){
+		*C = *A * *B;
+    	return;
+	}
 
-  /* REMOVER A LINHA ABAIXO E COLOCAR O CODIGO PELO METODO DE KARATSUBA */
-  DummyMult(n,A,n,B,C); 
-
-  return;
+	/*		Este trecho serve para localizar a maior ordem de 
+	 * 		grandeza para fazer o split. Esta função recebe o split
+	 * 		pelo uint n. Portanto estou comentando este trecho, por hora.
+ 	 *
+	
+	uint i = numSplitFinder(*A);
+	uint j = numSplitFinder(*B);
+	if(i>j)
+		n = i;
+	else
+		n = j;
+	*/
+	
+	double A0, A1, B0, B1, z0, z1, z2, sum1, sum2; //indice 0 = low, indice 1 = high
+	numSplitter(n, *A, &A1, &A0); //quebra o número em duas partes
+	numSplitter(n, *B, &B1, &B0);
+	
+	sum1 = A0 + B1; //faz a soma do A low com B high
+	sum2 = B0 + A1; //faz a soma do B low com A high
+	
+	RecursiveKaratsuba2(n, &A0, &B0, &z0);
+	RecursiveKaratsuba2(n, &sum1, &sum2, &z1);
+	RecursiveKaratsuba2(n, &A1, &B1, &z2);
+	
+	*C = (z2*(pow(10,(2*n))))+((z1-z2-z0)*(pow(10,(n))))+(z0);
+	return;
 }
 
 
