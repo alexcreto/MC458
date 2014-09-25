@@ -1,6 +1,8 @@
 CC = gcc
 CFLAGS = -std=gnu99 -D_XOPEN_SOURCE
 
+all: esqueleto-karatsuba karatsubaPoten2
+
 esqueleto-karatsuba: esqueleto-karatsuba.c
 	${CC} ${CFLAGS} esqueleto-karatsuba.c -o esqueleto-karatsuba -lm
 	
