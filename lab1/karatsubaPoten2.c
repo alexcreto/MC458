@@ -6,6 +6,8 @@
 #define EPS 1e-5
 typedef unsigned int uint;
 
+uint quad_sum = 0, quad_mult = 0, kara_sum = 0, kara_mult = 0, fft_sum = 0, fft_mult = 0;
+
 // devolve proxima potencia de 2 maior ou igual a n
 static inline 
 uint power2(uint n){uint p=1;while(p<n)p=p<<1;return(p);} 
@@ -17,15 +19,23 @@ uint PolinomiosIguais(uint n,double A[],char *NA,double B[],char *NB)
       printf("%10s: %lf.X^%d\n",NA,A[i],i);
       printf("%10s: %lf.X^%d\n\n",NB,B[i],i); 
       r=0;} 
-  return(r);}
+  return(r);
+}
 
 
 // Calcula o produto dos polinomios A e B pelo metodo direto, e coloca em C
 unsigned long DummyMult(uint nA, double A[],uint nB, double B[],double C[])
 { unsigned long tinicio=clock();
-  for (uint j=0;j<nA+nB-1;j++) C[j] = 0.0;
-  for (uint j=0;j<nA;j++) for (uint k=0;k<nB;k++) C[j+k] += A[j]*B[k];
-  return(clock()-tinicio);}
+	for (uint j=0;j<nA+nB-1;j++) C[j] = 0.0;
+	for (uint j=0;j<nA;j++) {
+		for (uint k=0;k<nB;k++) {
+			C[j+k] += A[j]*B[k];
+			quad_mult++;
+			quad_sum++;
+		}
+	}
+  return(clock()-tinicio);
+}
 
 // Metodo de Karatsuba. Faca uma primeira versao quando n eh potencia de 2.
 // A(x) = A0(x) + A1(x)*x^{n/2}  ,   B(x) = B0(x) + B1(x)*x^{n/2}
@@ -40,9 +50,15 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
 
   /* REMOVER A LINHA ABAIXO E COLOCAR O CODIGO PELO METODO DE KARATSUBA */
   //  DummyMult(n,A,n,B,C);
-  if(n <= 32){
-    for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
-    for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += A[j]*B[k];
+	if(n <= 32){
+		for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
+		for (uint j=0;j<n;j++) {
+			for (uint k=0;k<n;k++) {
+				C[j+k] += A[j]*B[k];
+				kara_mult++;
+				kara_sum++;
+			}
+		}
     return;
   }
 
@@ -55,12 +71,15 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
   for(uint j = 0; j<n/2; j++){
     sum1[j] = A[j] + A[j+(n/2)];
     sum2[j] = B[j] + B[j+(n/2)];
+	kara_sum += 2;
   }
 
   RecursiveKaratsuba2(n/2, sum1, sum2, mult3);
 
-  for(uint j = 0; j < n; j++)
-    mult3[j] = mult3[j] - (mult1[j] + mult2[j]);
+	for(uint j = 0; j < n; j++){
+    	mult3[j] = mult3[j] - (mult1[j] + mult2[j]);
+		kara_sum += 2;
+	}
 
   for(uint j=0;j<n+n-1;j++) 
     C[j] = 0.0;
@@ -73,6 +92,7 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
     C[j] += mult1[j];
     C[j+(n/2)] += mult3[j];
     C[j+n] += mult2[j];
+	kara_sum += 3;
     }
 
   //for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += A[j]*B[k];
@@ -93,29 +113,36 @@ unsigned long Karatsuba2(uint dA, double A[],uint dB, double B[],double C[])
 
 double TestaPorArquivo(char *filename)
 {  uint np,dA,dB;
-  double A[N],B[N],C1[N],C2[N];
-  FILE *fp;
-  unsigned long tDummyMult=0,tKaratsuba2=0;
-  fp = fopen(filename,"r");
-  if (fp==NULL){printf("Erro para abrir arquivo %s\n.\n",filename);return(0);}
-  fscanf(fp,"%u",&np);
-  for (uint i=0;i<np;i++){
-    // le o polinomio A com dA elementos e o polinomio B com dB elementos
-    fscanf(fp,"%u",&dA); for (uint j=0;j<dA;j++) fscanf(fp,"%lf",&A[j]);
-    fscanf(fp,"%u",&dB); for (uint j=0;j<dB;j++) fscanf(fp,"%lf",&B[j]);
-    if ((dA>N/2)||(dB>N/2)){
-      printf("Tamanho dos polinomios nao suportado. Max %d.\n",N/2);exit(0);}
-    tDummyMult += DummyMult(dA,A,dB,B,C1);// resolve por met. DummyMult
-    tKaratsuba2 += Karatsuba2(dA,A,dB,B,C2);  // resolve por met. Karatsuba
-    if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2")) {
-      printf("\n\nIter. %d: Polinomios sao diferentes.\n",i+1); break;}
+	double A[N],B[N],C1[N],C2[N];
+	FILE *fp;
+	unsigned long tDummyMult=0,tKaratsuba2=0;
+	fp = fopen(filename,"r");
+	if (fp==NULL){printf("Erro para abrir arquivo %s\n.\n",filename);return(0);}
+	fscanf(fp,"%u",&np);
+	for (uint i=0;i<np;i++){
+		// le o polinomio A com dA elementos e o polinomio B com dB elementos
+		fscanf(fp,"%u",&dA); for (uint j=0;j<dA;j++) fscanf(fp,"%lf",&A[j]);
+		fscanf(fp,"%u",&dB); for (uint j=0;j<dB;j++) fscanf(fp,"%lf",&B[j]);
+		if ((dA>N/2)||(dB>N/2)){
+		  printf("Tamanho dos polinomios nao suportado. Max %d.\n",N/2);exit(0);}
+		tDummyMult += DummyMult(dA,A,dB,B,C1);// resolve por met. DummyMult
+		tKaratsuba2 += Karatsuba2(dA,A,dB,B,C2);  // resolve por met. Karatsuba
+		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2")) {
+			printf("\n\nIter. %d: Polinomios sao diferentes.\n",i+1); break;}
 
-    printf("It.%4u: Tempo Karatsuba2 = %.3lfs,   Dummy/Karatsuba2 = %5.3lf\n",
-	   i+1, (double) tKaratsuba2/CLOCKS_PER_SEC,
-	        (double) tDummyMult / (double) tKaratsuba2);
-  }
-  fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
-  return((double) tDummyMult / (double) tKaratsuba2);
+		printf("It.%4u: Tempo Karatsuba2 = %.3lfs,   Dummy/Karatsuba2 = %5.3lf\n",
+		   i+1, (double) tKaratsuba2/CLOCKS_PER_SEC,
+		        (double) tDummyMult / (double) tKaratsuba2);
+	}
+ 
+	FILE *file = fopen("ra101354_122307.log", "rw");
+	fprintf(file, "quad %s %d %d %f", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	fprintf(file, "kara %s %d %d %f", filename, kara_mult, kara_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	//fprintf(file, "fft %s %d %d %f", filename, fft_mult, fft_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	fclose(file);
+ 
+	fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
+	return((double) tDummyMult / (double) tKaratsuba2);
 }
 
 double TestaAleatorio(uint n)
@@ -157,7 +184,7 @@ int main(int argc,char **argv)
     n = atoi(argv[1]);
     if (n==0) taxa = TestaPorArquivo(argv[1]);
     else taxa = TestaAleatorio(n);}
-
+	
     if (taxa<1) printf("\nMultiplicacao direta foi mais rapida, na media.\n\n");
   else printf("\nMultiplicacao por Karatsuba foi mais rapida, na media.\n\n");
 
