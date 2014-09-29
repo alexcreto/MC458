@@ -77,7 +77,7 @@ void RecursiveKaratsuba2(uint n, double *A, double *B, double *C)
 	/*		Este trecho serve para localizar a maior ordem de 
 	 * 		grandeza para fazer o split. Esta função recebe o split
 	 * 		pelo uint n. Portanto estou comentando este trecho, por hora.
- 	 *
+ 	 */
 	
 	uint i = numSplitFinder(*A);
 	uint j = numSplitFinder(*B);
@@ -85,7 +85,7 @@ void RecursiveKaratsuba2(uint n, double *A, double *B, double *C)
 		n = i;
 	else
 		n = j;
-	*/
+	
 	
 	double A0, A1, B0, B1, z0, z1, z2, sum1, sum2; //indice 0 = low, indice 1 = high
 	numSplitter(n, *A, &A1, &A0); //quebra o número em duas partes
