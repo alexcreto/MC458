@@ -39,22 +39,39 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
 { 
 
   /* REMOVER A LINHA ABAIXO E COLOCAR O CODIGO PELO METODO DE KARATSUBA */
-  //  DummyMult(n,A,n,B,C);
-  if(n <= 32){
-    for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
-    for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += A[j]*B[k];
-    return;
+  //  DummyMult(n,A,n,B,C); 
+  double *Ax, *Bx;
+
+  if(n % 2 == 1){
+   
+    Ax = malloc((n+1)*sizeof(double));
+    Bx = malloc((n+1)*sizeof(double));
+    for(uint j = 0; j < n; j++){
+      Ax[j] = A[j];
+      Bx[j] = B[j];
+    }
+    Ax[n] = 0;
+    Bx[n] = 0;
+    n++;
+  }
+  else{
+    Ax = A;
+    Bx = B;
   }
 
-  double mult1[n], mult2[n], mult3[n], sum1[n/2], sum2[n/2];
-
-  RecursiveKaratsuba2(n/2, A, B, mult1);
-  RecursiveKaratsuba2(n/2, &A[n/2], &B[n/2], mult2);
-  
+  if(n <= 30){
+    for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
+    for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += Ax[j]*Bx[k];
+    return;
+  }
+  double mult1[n], mult2[n], mult3[n], sum1[n/2], sum2[n/2];// *Ax, *Bx;
+ 
+  RecursiveKaratsuba2(n/2, Ax, Bx, mult1);
+  RecursiveKaratsuba2(n/2, &Ax[n/2], &Bx[n/2], mult2);
 
   for(uint j = 0; j<n/2; j++){
-    sum1[j] = A[j] + A[j+(n/2)];
-    sum2[j] = B[j] + B[j+(n/2)];
+    sum1[j] = Ax[j] + Ax[j+(n/2)];
+    sum2[j] = Bx[j] + Bx[j+(n/2)];
   }
 
   RecursiveKaratsuba2(n/2, sum1, sum2, mult3);
@@ -66,16 +83,10 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
     C[j] = 0.0;
 
   for(uint j = 0; j < n; j++){
-    //    printf("%u\n", n);
-    // printf("%lf ", mult1[j]);
-    //printf("%lf ", mult2[j]);
-    //printf("%lf\n\n", mult3[j]);
     C[j] += mult1[j];
     C[j+(n/2)] += mult3[j];
     C[j+n] += mult2[j];
-    }
-
-  //for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += A[j]*B[k];
+  }
 
   return;
 }
@@ -88,7 +99,8 @@ unsigned long Karatsuba2(uint dA, double A[],uint dB, double B[],double C[])
   if (dA>dB) n = power2(dA); else n = power2(dB); // n eh menor pot. de 2 >= dA e dB
   for (uint i=dA;i<n  ;i++) A[i] = 0.0; // completa com 0 posições restantes de A
   for (uint i=dB;i<n  ;i++) B[i] = 0.0; // completa com 0 posições restantes de B
-  RecursiveKaratsuba2(n,A,B,C);
+  RecursiveKaratsuba2(dA,A,B,C);
+  //  RecursiveKaratsuba2(n,A,B,C);
   return(clock()-tinicio); }
 
 double TestaPorArquivo(char *filename)
