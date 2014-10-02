@@ -123,11 +123,10 @@ unsigned long DummyMult(uint nA, double A[],uint nB, double B[],double C[])
 void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
 {
 
-  /* REMOVER A LINHA ABAIXO E COLOCAR O CODIGO PELO METODO DE KARATSUBA */
-<<<<<<< HEAD
-  //  DummyMult(n,A,n,B,C); 
   double *Ax, *Bx;
+  int alocado = 0;
 
+  //Ajuste caso a quantidade de elementos seja impar
   if(n % 2 == 1){
    
     Ax = malloc((n+1)*sizeof(double));
@@ -139,74 +138,55 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
     Ax[n] = 0;
     Bx[n] = 0;
     n++;
+    alocado = 1;
   }
-  else{
+  else{//Caso nao seja impar apenas faz ela apontar para os polinomios receebidos
     Ax = A;
     Bx = B;
   }
 
-  if(n <= 30){
+  if(n <= 30){//Threshold que determina a partir de quando vamos iniciar a multiplicacao convencional
     for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
     for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += Ax[j]*Bx[k];
+    kara_sum++;
+    kara_mult++;
     return;
   }
-  double mult1[n], mult2[n], mult3[n], sum1[n/2], sum2[n/2];// *Ax, *Bx;
+  double mult1[n], mult2[n], mult3[n], sum1[n/2], sum2[n/2];
  
+  //Faz as chamadas recursivar que retornal os polinomios Ax e Bx multiplicados em mult1 e mult2
   RecursiveKaratsuba2(n/2, Ax, Bx, mult1);
   RecursiveKaratsuba2(n/2, &Ax[n/2], &Bx[n/2], mult2);
 
+  //Mais alguns ajustes para continuar a multiplicacao pelo metodo karatsuba
   for(uint j = 0; j<n/2; j++){
     sum1[j] = Ax[j] + Ax[j+(n/2)];
     sum2[j] = Bx[j] + Bx[j+(n/2)];
-=======
-  //  DummyMult(n,A,n,B,C);
-	if(n <= 32){
-		for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
-		for (uint j=0;j<n;j++) {
-			for (uint k=0;k<n;k++) {
-				C[j+k] += A[j]*B[k];
-				kara_mult++;
-				kara_sum++;
-			}
-		}
-    return;
-  }
-
-  double mult1[n], mult2[n], mult3[n], sum1[n/2], sum2[n/2];
-
-  RecursiveKaratsuba2(n/2, A, B, mult1);
-  RecursiveKaratsuba2(n/2, &A[n/2], &B[n/2], mult2);
-
-
-  for(uint j = 0; j<n/2; j++){
-    sum1[j] = A[j] + A[j+(n/2)];
-    sum2[j] = B[j] + B[j+(n/2)];
-	kara_sum += 2;
->>>>>>> 06ff9b4e9f52832edcd64694a5a6bc6b733734c8
+    kara_sum += 2;
   }
 
   RecursiveKaratsuba2(n/2, sum1, sum2, mult3);
-
-	for(uint j = 0; j < n; j++){
-    	mult3[j] = mult3[j] - (mult1[j] + mult2[j]);
-		kara_sum += 2;
-	}
-
+  
+  for(uint j = 0; j < n; j++){
+    mult3[j] = mult3[j] - (mult1[j] + mult2[j]);
+    kara_sum += 2;
+  }
+  
   for(uint j=0;j<n+n-1;j++)
     C[j] = 0.0;
 
+  //Coloca os valores de cada mult(1,2,3) nas posicoes apropriadas
   for(uint j = 0; j < n; j++){
     C[j] += mult1[j];
     C[j+(n/2)] += mult3[j];
     C[j+n] += mult2[j];
-<<<<<<< HEAD
+    kara_sum += 3;
   }
-=======
-	kara_sum += 3;
-    }
-
-  //for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += A[j]*B[k];
->>>>>>> 06ff9b4e9f52832edcd64694a5a6bc6b733734c8
+  
+  if(alocado){
+    free(Bx);
+    free(Ax);
+  }
 
   return;
 }
@@ -219,13 +199,9 @@ unsigned long Karatsuba2(uint dA, double A[],uint dB, double B[],double C[])
   if (dA>dB) n = power2(dA); else n = power2(dB); // n eh menor pot. de 2 >= dA e dB
   for (uint i=dA;i<n  ;i++) A[i] = 0.0; // completa com 0 posições restantes de A
   for (uint i=dB;i<n  ;i++) B[i] = 0.0; // completa com 0 posições restantes de B
-<<<<<<< HEAD
   RecursiveKaratsuba2(dA,A,B,C);
   //  RecursiveKaratsuba2(n,A,B,C);
-  return(clock()-tinicio); }
-=======
-  RecursiveKaratsuba2(n,A,B,C);
-  return(clock()-tinicio);
+  return(clock()-tinicio); 
 }
 
 unsigned long FFT2(uint dA, double A[],uint dB, double B[],double C[])
@@ -242,7 +218,7 @@ unsigned long FFT2(uint dA, double A[],uint dB, double B[],double C[])
   fft(n,Ac,Bc);
   return(clock()-tinicio);
 }
->>>>>>> 06ff9b4e9f52832edcd64694a5a6bc6b733734c8
+
 
 double TestaPorArquivo(char *filename)
 {  uint np,dA,dB;
@@ -261,22 +237,22 @@ double TestaPorArquivo(char *filename)
 		tDummyMult += DummyMult(dA,A,dB,B,C1);// resolve por met. DummyMult
 		tKaratsuba2 += Karatsuba2(dA,A,dB,B,C2);  // resolve por met. Karatsuba
 		tFFT += FFT2(dA,A,dB,B,C3);  // resolve por met. FFT
-		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2") || !PolinomiosIguais(dA+dB-1,C1,"DummyMult",C3,"FFT2")) {
+		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2")){// || !PolinomiosIguais(dA+dB-1,C1,"DummyMult", C3,"FFT2")) {
 			printf("\n\nIter. %d: Polinomios sao diferentes.\n",i+1); break;}
 
 		printf("It.%4u: Tempo Karatsuba2 = %.3lfs,   Dummy/Karatsuba2 = %5.3lf\n",
 		   i+1, (double) tKaratsuba2/CLOCKS_PER_SEC,
 		        (double) tDummyMult / (double) tKaratsuba2);
-		printf("It.%4u: Tempo FFT = %.3lfs,   Dummy/FFT = %5.3lf\n",
+		printf("It.%4u: Tempo FFT = %.3lfs,          Dummy/FFT = %5.3lf\n",
 		   i+1, (double) tFFT/CLOCKS_PER_SEC,
-		        (double) tDummyMult / (double) tFFT);
+		   (double) tDummyMult / (double) tFFT);
 	}
 
-	FILE *file = fopen("ra101354_122307.log", "rw");
-	fprintf(file, "quad %s %d %d %f", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
-	fprintf(file, "kara %s %d %d %f", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
-	fprintf(file, "fft %s %d %d %f", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
-	fclose(file);
+	//FILE *file = fopen("ra101354_122307.log", "rw");
+	//fprintf(file, "quad %s %d %d %f", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	//fprintf(file, "kara %s %d %d %f", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
+	//fprintf(file, "fft %s %d %d %f", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
+	//fclose(file);
 
 	fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
 	return((double) tDummyMult / (double) tKaratsuba2);
