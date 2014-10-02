@@ -200,7 +200,7 @@ unsigned long Karatsuba2(uint dA, double A[],uint dB, double B[],double C[])
   for (uint i=dA;i<n  ;i++) A[i] = 0.0; // completa com 0 posições restantes de A
   for (uint i=dB;i<n  ;i++) B[i] = 0.0; // completa com 0 posições restantes de B
   RecursiveKaratsuba2(dA,A,B,C);
-  //  RecursiveKaratsuba2(n,A,B,C);
+  //RecursiveKaratsuba2(n,A,B,C);
   return(clock()-tinicio); 
 }
 
@@ -237,7 +237,7 @@ double TestaPorArquivo(char *filename)
 		tDummyMult += DummyMult(dA,A,dB,B,C1);// resolve por met. DummyMult
 		tKaratsuba2 += Karatsuba2(dA,A,dB,B,C2);  // resolve por met. Karatsuba
 		tFFT += FFT2(dA,A,dB,B,C3);  // resolve por met. FFT
-		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2")){// || !PolinomiosIguais(dA+dB-1,C1,"DummyMult", C3,"FFT2")) {
+		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2") || !PolinomiosIguais(dA+dB-1,C1,"DummyMult", C3,"FFT2")) {
 			printf("\n\nIter. %d: Polinomios sao diferentes.\n",i+1); break;}
 
 		printf("It.%4u: Tempo Karatsuba2 = %.3lfs,   Dummy/Karatsuba2 = %5.3lf\n",
@@ -248,11 +248,11 @@ double TestaPorArquivo(char *filename)
 		   (double) tDummyMult / (double) tFFT);
 	}
 
-	//FILE *file = fopen("ra101354_122307.log", "rw");
-	//fprintf(file, "quad %s %d %d %f", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
-	//fprintf(file, "kara %s %d %d %f", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
-	//fprintf(file, "fft %s %d %d %f", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
-	//fclose(file);
+	FILE *file = fopen("ra101354_122307.log", "rw");
+	fprintf(file, "quad %s %d %d %f", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	fprintf(file, "kara %s %d %d %f", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
+	fprintf(file, "fft %s %d %d %f", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
+	fclose(file);
 
 	fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
 	return((double) tDummyMult / (double) tKaratsuba2);
