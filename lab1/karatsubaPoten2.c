@@ -14,7 +14,7 @@ typedef struct
    double i; /* imaginário */
 } complex;
 
-uint quad_sum = 0, quad_mult = 0, kara_sum = 0, kara_mult = 0, fft_sum = 0, fft_mult = 0;
+unsigned long quad_sum = 0, quad_mult = 0, kara_sum = 0, kara_mult = 0, fft_sum = 0, fft_mult = 0;
 
 // devolve proxima potencia de 2 maior ou igual a n
 static inline
@@ -240,7 +240,7 @@ unsigned long FFT2(uint dA, double A[],uint dB, double B[],double C[])
   complex *yb, *b;
   int j;
   
-  /* Allocate storage for fft results */
+  /* Aloca espaço para parciais do cálculo */
   ya = (complex*)malloc(2 * n * sizeof(complex));
   yb = (complex*)malloc(2 * n * sizeof(complex));
   a = (complex*)malloc(2 * n * sizeof(complex));
@@ -259,18 +259,18 @@ unsigned long FFT2(uint dA, double A[],uint dB, double B[],double C[])
     b[i].i = 0.0;
   }
   
-  /* DFT of A and B */
+  /* Aplica fft em a e em b */
   fft(2*n, a, ya, 0);
   fft(2*n, b, yb, 0);
 
-  /* Pointwise Multiplication */
+  /* Multiplicação direta */
   for (j = 0; j < 2*n; j++)
     ya[j] = complex_mul(ya[j], yb[j]);
   
-  /* Inverse DFT (swapped input and output arrays) */
+  /* FFT inversa */
   fft(2*n, ya, a, 1);
   
-  /* Divide real part by n */
+  /* Divide a parte real por n */
   for (j = 0; j < ((2*n)-1); j++)
     C[j] = a[j].r/(n*2);
   
@@ -311,9 +311,9 @@ double TestaPorArquivo(char *filename)
 
 	FILE *file;
  	file = fopen("ra101354_122307.log", "aw");
-	fprintf(file, "quad %s %d %d %f\n", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
-	fprintf(file, "kara %s %d %d %f\n", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
-	fprintf(file, "fft %s %d %d %f\n", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
+	fprintf(file, "quad %s %lu %lu %f\n", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	fprintf(file, "kara %s %lu %lu %f\n", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
+	fprintf(file, "fft %s %lu %lu %f\n", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
 	fclose(file);
 
 	fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
