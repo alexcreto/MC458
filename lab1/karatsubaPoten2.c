@@ -4,7 +4,8 @@
 #include <time.h>
 #define N 65536
 #define EPS 1e-5
-#define PI 3.14159265358979323846
+#define PI 3.14159265358979323846264338327
+
 typedef unsigned int uint;
 
 typedef struct
@@ -29,6 +30,16 @@ uint PolinomiosIguais(uint n,double A[],char *NA,double B[],char *NB)
   return(r);
 }
 
+complex complex_mul(complex a, complex b)
+{
+   complex ans;
+   
+   ans.r = a.r * b.r - a.i * b.i;
+   ans.i = a.r * b.i + a.i * b.r;
+   
+   return ans;
+}
+
 void fft(uint n, complex* A, complex* C, int inv)
 {
 	complex w, wn, aux;
@@ -44,18 +55,18 @@ void fft(uint n, complex* A, complex* C, int inv)
 		return;
 	}
 
-	if (inv)		//Escolha entre FFT e invFFT
-   {
-      wn.r = cos(-2*PI/(double)n);
-      wn.i = sin(-2*PI/(double)n);
-   }
-   else
-   {
-      wn.r = cos(2*PI/(double)n);
-      wn.i = sin(2*PI/(double)n); 
-   }
+	if (inv) //Escolha entre FFT e invFFT
+	  {
+	    wn.r = cos(-2*PI/(double)n);
+	    wn.i = sin(-2*PI/(double)n);
+	  }
+	else
+	  {
+	    wn.r = cos(2*PI/(double)n);
+	    wn.i = sin(2*PI/(double)n); 
+	  }
 	fft_mult += 2;
-
+	
 	w.r = 1.0;
 	w.i = 0.0;
 
@@ -66,37 +77,42 @@ void fft(uint n, complex* A, complex* C, int inv)
 	fft_mult += 4;
 
 	for (i = 0; i < (n/2); i++)	//Pega os coeficiêntes pares e ímpares
-	{
-		A0[i] = A[2*i];
-		A1[i] = A[(2*i)+1];
-		fft_mult += 2;
-		fft_sum++;
-	}
+	  {
+	    A0[i] = A[2*i];
+	    A1[i] = A[2*i+1];
+	    fft_mult += 2;
+	    fft_sum++;
+	  }
 
 	fft(n/2, A0, C0, inv);		//Calcula as metades
 	fft(n/2, A1, C1, inv);
 
 	for (j = 0; j < (n/2); j++)	//Junta os resultados parciais
-	{
-
-	  aux.r = w.r * C1[j].r - w.i * C1[j].i;
-	  aux.i = w.r * C1[j].i + w.i * C1[j].r;
-	  fft_mult += 4;
-	  fft_sum += 2;
+	  {
+	    
+	    aux = complex_mul(w,C1[j]);
+	    //aux.r = w.r * C1[j].r - w.i * C1[j].i;
+	    //aux.i = w.r * C1[j].i + w.i * C1[j].r;
+	    fft_mult += 4;
+	    fft_sum += 2;
 	  
-	  C[j].r = C0[j].r + aux.r;
-	  C[j].i = C0[j].i + aux.i;
-	  fft_sum += 2;
+	    //C[j] = complex_add(C0[j], aux);
+	    C[j].r = C0[j].r + aux.r;
+	    C[j].i = C0[j].i + aux.i;
+	    fft_sum += 2;
 	  
-	  C[j+n/2].r = C0[j].r - aux.r;
-	  C[j+n/2].i = C0[j].i - aux.i;
-	  fft_sum += 2;
+	    //C[j+n/2] = complex_sub(C0[j], aux);
+	    C[j+n/2].r = C0[j].r - aux.r;
+	    C[j+n/2].i = C0[j].i - aux.i;
+	    fft_sum += 2;
 	  
-	  w.r = w.r * wn.r - w.i * wn.i;
-	  w.i = w.r * wn.i + w.i * wn.r;
-	  fft_mult += 4;
-	  fft_sum += 2;
-	}
+	    w = complex_mul(w,wn);
+	    //w.r = w.r * wn.r - w.i * wn.i;
+	    //w.i = w.r * wn.i + w.i * wn.r;
+	    fft_mult += 4;
+	    fft_sum += 2;
+	  }
+	
 
 	free(A0);
 	free(A1);
@@ -105,15 +121,6 @@ void fft(uint n, complex* A, complex* C, int inv)
 
 	return;
 }
-
-void multFFT(complex *A, complex *B, complex *C, uint n){
-
-  for(uint i = 0; i < n; i++){
-    C[i].r = A[i].r * B[i].r - A[i].i * B[i].i;
-    C[i].i = A[i].r * B[i].i + A[i].i * B[i].r;
-  }
-
-};
 
 // Calcula o produto dos polinomios A e B pelo metodo direto, e coloca em C
 unsigned long DummyMult(uint nA, double A[],uint nB, double B[],double C[])
@@ -162,7 +169,7 @@ void RecursiveKaratsuba2(uint n,double  *A,double *B,double *C)
     Bx = B;
   }
 
-  if(n <= 30){//Threshold que determina a partir de quando vamos iniciar a multiplicacao convencional
+  if(n <= 2){//Threshold que determina a partir de quando vamos iniciar a multiplicacao convencional
     for (uint j=0;j<n+n-1;j++) C[j] = 0.0;
     for (uint j=0;j<n;j++) for (uint k=0;k<n;k++) C[j+k] += Ax[j]*Bx[k];
     kara_sum++;
@@ -216,8 +223,8 @@ unsigned long Karatsuba2(uint dA, double A[],uint dB, double B[],double C[])
   if (dA>dB) n = power2(dA); else n = power2(dB); // n eh menor pot. de 2 >= dA e dB
   for (uint i=dA;i<n  ;i++) A[i] = 0.0; // completa com 0 posições restantes de A
   for (uint i=dB;i<n  ;i++) B[i] = 0.0; // completa com 0 posições restantes de B
-  RecursiveKaratsuba2(dA,A,B,C);
-  //RecursiveKaratsuba2(n,A,B,C);
+  //RecursiveKaratsuba2(dA,A,B,C);
+  RecursiveKaratsuba2(n,A,B,C);
   return(clock()-tinicio); 
 }
 
@@ -225,25 +232,51 @@ unsigned long FFT2(uint dA, double A[],uint dB, double B[],double C[])
 { unsigned long tinicio=clock(); uint n;
   if ((dA<=0)||(dB<=0)) return(0);
   if (dA>dB) n = power2(dA); else n = power2(dB); // n eh menor pot. de 2 >= dA e dB
-  for (uint i=dA;i<n  ;i++) A[i] = 0.0; // completa com 0 posições restantes de A
-  for (uint i=dB;i<n  ;i++) B[i] = 0.0; // completa com 0 posições restantes de B
-  complex Ac[N], Bc[N], Cc[N], Dc[N], Ec[N];
-  for(uint i=0; i<N; i++){
-      Ac[i].r = A[i];
-      Bc[i].r = B[i];
-      Cc[i].r = 0;
-      Dc[i].r = 0;
-      Ec[i].r = 0;
-      //      Fc[i].r = 0;
+  //for (uint i=dA;i<n  ;i++) A[i] = 0.0; // completa com 0 posições restantes de A
+  //for (uint i=dB;i<n  ;i++) B[i] = 0.0; // completa com 0 posições restantes de B
+  //complex Ac[N], Bc[N], Cc[N], Dc[N], Ec[N];
+
+  complex *ya, *a;
+  complex *yb, *b;
+  int j;
+  
+  /* Allocate storage for fft results */
+  ya = (complex*)malloc(2 * n * sizeof(complex));
+  yb = (complex*)malloc(2 * n * sizeof(complex));
+  a = (complex*)malloc(2 * n * sizeof(complex));
+  b = (complex*)malloc(2 * n * sizeof(complex));
+  for(uint i=0; i<dA; i++){
+    a[i].r = A[i];
+    b[i].r = B[i];
+    a[i].i = 0.0;
+    b[i].i = 0.0;
+    //      Fc[i].r = 0;
   }
-  fft(n,Ac,Cc, 0);
-  fft(n,Bc,Dc, 0);
-  multFFT(Cc,Dc,Ac, n);
-  fft(n,Cc,Ec, 1);
-  /* for(uint i = 0; i < n; i++){ */
-  /*   printf("%u  %lf  %lf\n", i, Ac[i].r, Ac[i].i); */
-  /*   printf("%u  %lf  %lf\n", i, Cc[i].r, Cc[i].i); */
-  /* } */
+  for(uint i=dA; i<2*n; i++){
+    a[i].r = 0.0;
+    b[i].r = 0.0;
+    a[i].i = 0.0;
+    b[i].i = 0.0;
+  }
+  
+  /* DFT of A and B */
+  fft(2*n, a, ya, 0);
+  fft(2*n, b, yb, 0);
+
+  /* Pointwise Multiplication */
+  for (j = 0; j < 2*n; j++)
+    ya[j] = complex_mul(ya[j], yb[j]);
+  
+  /* Inverse DFT (swapped input and output arrays) */
+  fft(2*n, ya, a, 1);
+  
+  /* Divide real part by n */
+  for (j = 0; j < ((2*n)-1); j++)
+    C[j] = a[j].r/(n*2);
+  
+  free(ya);
+  free(yb);
+  
   return(clock()-tinicio);
 }
 
@@ -265,7 +298,7 @@ double TestaPorArquivo(char *filename)
 		tDummyMult += DummyMult(dA,A,dB,B,C1);// resolve por met. DummyMult
 		tKaratsuba2 += Karatsuba2(dA,A,dB,B,C2);  // resolve por met. Karatsuba
 		tFFT += FFT2(dA,A,dB,B,C3);  // resolve por met. FFT
-		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2")){// || !PolinomiosIguais(dA+dB-1,C1,"DummyMult", C3,"FFT2")) {
+		if (!PolinomiosIguais(dA+dB-1,C1,"DummyMult",C2,"Karatsuba2") || !PolinomiosIguais(dA+dB-1,C1,"DummyMult", C3,"FFT2")) {
 			printf("\n\nIter. %d: Polinomios sao diferentes.\n",i+1); break;}
 
 		printf("It.%4u: Tempo Karatsuba2 = %.3lfs,   Dummy/Karatsuba2 = %5.3lf\n",
