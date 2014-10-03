@@ -29,7 +29,7 @@ uint PolinomiosIguais(uint n,double A[],char *NA,double B[],char *NB)
   return(r);
 }
 
-void fft(uint n, complex* A, complex* C)
+void fft(uint n, complex* A, complex* C, int inv)
 {
 	complex w, wn, aux;
 	complex* A0;
@@ -44,8 +44,16 @@ void fft(uint n, complex* A, complex* C)
 		return;
 	}
 
-	wn.r = cos(2*PI/(double)n);
-	wn.i = sin(2*PI/(double)n);
+	if (inv)		//Escolha entre FFT e invFFT
+   {
+      wn.r = cos(-2*PI/(double)n);
+      wn.i = sin(-2*PI/(double)n);
+   }
+   else
+   {
+      wn.r = cos(2*PI/(double)n);
+      wn.i = sin(2*PI/(double)n); 
+   }
 	fft_mult += 2;
 
 	w.r = 1.0;
@@ -65,8 +73,8 @@ void fft(uint n, complex* A, complex* C)
 		fft_sum++;
 	}
 
-	fft(n/2, A0, C0);		//Calcula as metades
-	fft(n/2, A1, C1);
+	fft(n/2, A0, C0, inv);		//Calcula as metades
+	fft(n/2, A1, C1, inv);
 
 	for (j = 0; j < (n/2); j++)	//Junta os resultados parciais
 	{
@@ -105,74 +113,6 @@ void multFFT(complex *A, complex *B, complex *C, uint n){
     C[i].i = A[i].r * B[i].i + A[i].i * B[i].r;
   }
 
-};
-
-void invFFT(uint n, complex *A, complex *C){
-	complex w, wn, aux;
-	complex* A0;
-	complex* A1;
-	complex* C0;
-	complex* C1;
-	uint i, j;
-
-	if (n == 1) 	//Base da recursão
-	{
-		C[0] = A[0];
-		return;
-	}
-
-	wn.r = cos(-2*PI/(double)n);
-	wn.i = sin(-2*PI/(double)n);
-	fft_mult += 2;
-
-	w.r = 1.0;
-	w.i = 0.0;
-
-	A0 = (complex*)malloc((n/2) * sizeof(complex));
-	A1 = (complex*)malloc((n/2) * sizeof(complex));
-	C0 = (complex*)malloc((n/2) * sizeof(complex));
-	C1 = (complex*)malloc((n/2) * sizeof(complex));
-	fft_mult += 4;
-
-	for (i = 0; i < (n/2); i++)	//Pega os coeficiêntes pares e ímpares
-	{
-		A0[i] = A[2*i];
-		A1[i] = A[(2*i)+1];
-		fft_mult += 2;
-		fft_sum++;
-	}
-
-	invFFT(n/2, A0, C0);		//Calcula as metades
-	invFFT(n/2, A1, C1);
-	
-	for (j = 0; j < (n/2); j++)	//Junta os resultados parciais
-	{
-
-	  aux.r = w.r * C1[j].r - w.i * C1[j].i;
-	  aux.i = w.r * C1[j].i + w.i * C1[j].r;
-	  fft_mult += 4;
-	  fft_sum += 2;
-	  
-	  C[j].r = (C0[j].r + aux.r)/n;
-	  C[j].i = (C0[j].i + aux.i)/n;
-	  fft_sum += 2;
-	  
-	  C[j+n/2].r = (C0[j].r - aux.r)/n;
-	  C[j+n/2].i = (C0[j].i - aux.i)/n;
-	  fft_sum += 2;
-	  
-	  w.r = w.r * wn.r - w.i * wn.i;
-	  w.i = w.r * wn.i + w.i * wn.r;
-	  fft_mult += 4;
-	  fft_sum += 2;
-	}
-
-	free(A0);
-	free(A1);
-	free(C0);
-	free(C1);
-
-	return;
 };
 
 // Calcula o produto dos polinomios A e B pelo metodo direto, e coloca em C
@@ -296,10 +236,10 @@ unsigned long FFT2(uint dA, double A[],uint dB, double B[],double C[])
       Ec[i].r = 0;
       //      Fc[i].r = 0;
   }
-  fft(n,Ac,Cc);
-  //fft(n,Bc,Dc);
-  //multFFT(Cc,Dc,Ac, n);
-  invFFT(n,Cc,Ec);
+  fft(n,Ac,Cc, 0);
+  fft(n,Bc,Dc, 0);
+  multFFT(Cc,Dc,Ac, n);
+  fft(n,Cc,Ec, 1);
   /* for(uint i = 0; i < n; i++){ */
   /*   printf("%u  %lf  %lf\n", i, Ac[i].r, Ac[i].i); */
   /*   printf("%u  %lf  %lf\n", i, Cc[i].r, Cc[i].i); */
@@ -343,7 +283,7 @@ double TestaPorArquivo(char *filename)
 	fclose(file);
 
 	fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
-	return((double) tDummyMult / (double) tKaratsuba2);
+	return((double) tKaratsuba2 / (double) tFFT);
 }
 
 double TestaAleatorio(uint n)
@@ -386,7 +326,7 @@ int main(int argc,char **argv)
     if (n==0) taxa = TestaPorArquivo(argv[1]);
     else taxa = TestaAleatorio(n);}
 
-    if (taxa<1) printf("\nMultiplicacao direta foi mais rapida, na media.\n\n");
+    if (taxa>1) printf("\nMultiplicacao por FFT foi mais rapida, na media.\n\n");
   else printf("\nMultiplicacao por Karatsuba foi mais rapida, na media.\n\n");
 
   return(1);
