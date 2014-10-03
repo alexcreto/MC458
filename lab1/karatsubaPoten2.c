@@ -276,10 +276,11 @@ double TestaPorArquivo(char *filename)
 		   (double) tDummyMult / (double) tFFT);
 	}
 
-	FILE *file = fopen("ra101354_122307.log", "rw");
-	fprintf(file, "quad %s %d %d %f", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
-	fprintf(file, "kara %s %d %d %f", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
-	fprintf(file, "fft %s %d %d %f", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
+	FILE *file;
+ 	file = fopen("ra101354_122307.log", "aw");
+	fprintf(file, "quad %s %d %d %f\n", filename, quad_mult, quad_sum, (double)tDummyMult/CLOCKS_PER_SEC);
+	fprintf(file, "kara %s %d %d %f\n", filename, kara_mult, kara_sum, (double)tKaratsuba2/CLOCKS_PER_SEC);
+	fprintf(file, "fft %s %d %d %f\n", filename, fft_mult, fft_sum, (double)tFFT/CLOCKS_PER_SEC);
 	fclose(file);
 
 	fclose(fp);  // devolve a taxa de tempo entre Dummy e Karatsuba2
