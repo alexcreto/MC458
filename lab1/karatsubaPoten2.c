@@ -36,6 +36,8 @@ complex complex_mul(complex a, complex b)
    
    ans.r = a.r * b.r - a.i * b.i;
    ans.i = a.r * b.i + a.i * b.r;
+   fft_sum += 2;
+   fft_mult += 4;
    
    return ans;
 }
@@ -59,13 +61,14 @@ void fft(uint n, complex* A, complex* C, int inv)
 	  {
 	    wn.r = cos(-2*PI/(double)n);
 	    wn.i = sin(-2*PI/(double)n);
+		fft_mult += 6;
 	  }
 	else
 	  {
 	    wn.r = cos(2*PI/(double)n);
 	    wn.i = sin(2*PI/(double)n); 
+		fft_mult += 6;
 	  }
-	fft_mult += 2;
 	
 	w.r = 1.0;
 	w.i = 0.0;
@@ -74,7 +77,7 @@ void fft(uint n, complex* A, complex* C, int inv)
 	A1 = (complex*)malloc((n/2) * sizeof(complex));
 	C0 = (complex*)malloc((n/2) * sizeof(complex));
 	C1 = (complex*)malloc((n/2) * sizeof(complex));
-	fft_mult += 4;
+	fft_mult += 8;
 
 	for (i = 0; i < (n/2); i++)	//Pega os coeficiêntes pares e ímpares
 	  {
