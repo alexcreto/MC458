@@ -71,6 +71,7 @@ uint A1(uint n, vector<vector<uint> > M, uint *tam_ci, uint *seq_vert_ci, uint t
       for(uint j = 0; j < n-1-adj; j++)
 		M1[i][j] = M[i+1][j+1];
     }
+//TODO jogar o v do topo de ordem em *seq_vert_ci; depois tam_ci++;
 	
 	//Chamar recursao M1
 	G1 = A1(n-1-adj, M1, tam_ci, seq_vert_ci, tempo_maximo, ordem);
@@ -80,7 +81,7 @@ uint A1(uint n, vector<vector<uint> > M, uint *tam_ci, uint *seq_vert_ci, uint t
 }
 
 uint A2(uint n, vector<vector<uint> > M, uint *tam_ci, uint *seq_vert_ci, uint tempo_maximo, uint ordem[]); 	// A2 do enunciado
-uint A3(uint n, vector<vector<uint> > M, uint *tam_ci, uint *seq_vert_ci, uint tempo_maximo, uint ordem[]);	// Algoritmo que devemos bolar que supere A1 e A2
+uint A3(uint n, vector<vector<uint> > M, uint *tam_ci, uint *seq_vert_ci, uint tempo_maximo, uint ordem[]);		// Algoritmo que devemos bolar que supere A1 e A2
 
 
 int main (){
