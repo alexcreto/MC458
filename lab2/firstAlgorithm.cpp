@@ -60,6 +60,13 @@ vector<vector<uint> > excluiVertice(vector<vector<uint> > M, uint vertice){
   return M;
 }
 
+  /*Por ter erases, dentro da funcao tenho q fazer
+   * o loop de tras pra frente, pois quando dou um erase
+   * o tamanho do vector diminui, portanto se fizesse em
+   * ordem crescente tenho limite superior o tamanho total
+   * se houvesse apenas 1 erase, ja haveria um seg fault.
+   */
+
 vector<vector<uint> > excluiAdjacentes(vector<vector<uint> > M, uint vertice, vector<int> *grau){
   vector<vector<uint> > M1 = M;
   uint size = M.size();
@@ -165,16 +172,8 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
   //passa o vetor ordem como se comecasse do proximo elemento
   proxOrdem = &(ordem[1]);
 
-  uint adj = 0; // Numero de vertices adjacentes a v
-  for(uint i = 0; i < n; i++) if(M[i][0]) adj++;
 
-  //Cria copias pros varios possiveis grafos
- 
-
-
-
-
-  for(int k = n-1; k >= 0; k--){
+  for(int k = 0; k < n; k++){
     //caso o grau seja 0, trivialmente ele estara na resposta
     if(grau[k] == 0){
       vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));
@@ -195,6 +194,8 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
       grauN.erase(grauN.begin()+k);
       GN = A2(n-1, MN, grauN, seq_vert_ci, tempo_maximo, proxOrdem);
       
+      uint adj = 0; // Numero de vertices adjacentes a v
+      for(uint i = 0; i < n; i++) if(M[i][k]) adj++;
       vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
       M3 = excluiAdjacentes(M, k, &grau3);
       G3 = A2(n-1-adj, M3, grau3, seq_vert_ci, tempo_maximo, proxOrdem) + 1;
