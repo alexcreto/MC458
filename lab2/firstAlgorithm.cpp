@@ -70,7 +70,7 @@ vector<vector<uint> > excluiVertice(vector<vector<uint> > M, uint vertice){
 vector<vector<uint> > excluiAdjacentes(vector<vector<uint> > M, uint vertice, vector<int> *grau){
   vector<vector<uint> > M1 = M;
   uint size = M.size();
-  if(size > 1){
+  if(size >= 1){
     for(uint i = 0; i < size; i++){
       if(M[i][vertice] >= 1 || i == vertice){
     	(*grau)[i] = -9;
@@ -168,7 +168,7 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
   uint GN = 0, G0 = 0, G1 = 0, G3 = 0;
   uint MaxGN_0,MaxG1_3, Max;
   uint *proxOrdem;
-  vector<int> grauN = grau, grau1 = grau, grau3 = grau, grau0 = grau;
+  //u, grau1 = grau, grau3 = grau, grau0 = grau;
   //passa o vetor ordem como se comecasse do proximo elemento
   proxOrdem = &(ordem[1]);
 
@@ -176,6 +176,7 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
   for(int k = 0; k < n; k++){
     //caso o grau seja 0, trivialmente ele estara na resposta
     if(grau[k] == 0){
+      vector<int> grau0 = grau;
       vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));
       M0 = excluiVertice(M, k);
       grau0.erase(grau0.begin()+k);
@@ -183,17 +184,20 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
     }
     //caso grau seja 1, ele tb estara na resposta
     else if(grau[k] == 1){
+      vector<int> grau1 = grau;
       vector<vector<uint> >M1(n-2, vector<uint>(n-2,0));
       M1 = excluiAdjacentes(M, k, &grau1);
       G1 = A2(n-2, M1, grau1, seq_vert_ci, tempo_maximo, proxOrdem) + 1;
     }
     //de resto continua td igual
     else{
+      vector<int> grauN = grau;
       vector<vector<uint> >MN(n-1, vector<uint>(n-1,0));
       MN = excluiVertice(M, k);
       grauN.erase(grauN.begin()+k);
       GN = A2(n-1, MN, grauN, seq_vert_ci, tempo_maximo, proxOrdem);
       
+      vector<int> grau3 = grau;
       uint adj = 0; // Numero de vertices adjacentes a v
       for(uint i = 0; i < n; i++) if(M[i][k]) adj++;
       vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
