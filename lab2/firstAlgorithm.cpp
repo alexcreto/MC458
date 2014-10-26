@@ -155,7 +155,7 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
 
 
 
-uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, uint tempo_maximo, uint ordem[]){// A2 do enunciado
+uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, uint tempo_maximo, uint ordem[]){// A2 do enunciado
     /*
    * n 			=> 	Numero de vertices
    * M 			=> 	Matriz de adjacencia
@@ -172,7 +172,11 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
   //passa o vetor ordem como se comecasse do proximo elemento
   proxOrdem = &(ordem[1]);
 
-
+  /*Na verdade esse for deveria procurar se ha um elemento
+  * com grau 0 ou 1 e propagar a recursao com eles. E nao,
+  * procurar o primeiro elemento com grau 0 ou 1, mas isso
+  * nao deve ser tao dificil de arrumar
+  */
   for(int k = 0; k < n; k++){
     //caso o grau seja 0, trivialmente ele estara na resposta
     if(grau[k] == 0){
@@ -180,14 +184,16 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
       vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));
       M0 = excluiVertice(M, k);
       grau0.erase(grau0.begin()+k);
-      G0 = A2(n-1, M0, grau0, seq_vert_ci, tempo_maximo, proxOrdem) + 1;
+      G0 = A2(n-1, M0, grau0, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
+      seq_vert_ci2[ordem[0]] = 1;
     }
     //caso grau seja 1, ele tb estara na resposta
     else if(grau[k] == 1){
       vector<int> grau1 = grau;
       vector<vector<uint> >M1(n-2, vector<uint>(n-2,0));
       M1 = excluiAdjacentes(M, k, &grau1);
-      G1 = A2(n-2, M1, grau1, seq_vert_ci, tempo_maximo, proxOrdem) + 1;
+      G1 = A2(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
+      seq_vert_ci2[ordem[0]] = 1;
     }
     //de resto continua td igual
     else{
@@ -195,16 +201,20 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
       vector<vector<uint> >MN(n-1, vector<uint>(n-1,0));
       MN = excluiVertice(M, k);
       grauN.erase(grauN.begin()+k);
-      GN = A2(n-1, MN, grauN, seq_vert_ci, tempo_maximo, proxOrdem);
+      GN = A2(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, proxOrdem);
       
       vector<int> grau3 = grau;
       uint adj = 0; // Numero de vertices adjacentes a v
       for(uint i = 0; i < n; i++) if(M[i][k]) adj++;
       vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
       M3 = excluiAdjacentes(M, k, &grau3);
-      G3 = A2(n-1-adj, M3, grau3, seq_vert_ci, tempo_maximo, proxOrdem) + 1;
+      G3 = A2(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
+      //if(G3>GN)
+      //seq_vert_ci2[ordem[0]] = 1;
     }
   }
+
+  //TODO adicionar os elementos do conjunto independente em seq_vert_ci2
   
   MaxGN_0 = max(GN, G0);
   MaxG1_3 = max(G1, G3);
@@ -247,10 +257,10 @@ int main (){
 
     //cout<<A1(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci,0, (uint *)&ordem)<<endl<<endl;
     cout<<A2(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci2,0, (uint *)&ordem)<<endl<<endl;
-    ajusta_ci(graph, (uint *)&seq_vert_ci);
+    ajusta_ci(graph, (uint *)&seq_vert_ci2);
     for(uint i = 0; i < nmrDeVertices; i++)
       //cout<<ordem[i]<<" ";
-      //cout<<seq_vert_ci[i]<<" ";
+      cout<<seq_vert_ci2[i]<<" ";
     
     graph = vector<vector<uint> >(graph.size(),vector<uint>(graph.size(),0));
   }
