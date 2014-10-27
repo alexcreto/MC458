@@ -94,7 +94,7 @@ vector<vector<uint> > excluiAdjacentes(vector<vector<uint> > M, uint vertice, ve
 }
 
 
-uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, uint tempo_maximo, uint *ordem){
+uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, uint tempo_maximo, vector<uint> ordem){
   /*
    * n 			=> 	Numero de vertices
    * M 			=> 	Matriz de adjacencia
@@ -105,8 +105,9 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
 
   if(n <= 0) return 0;
   uint G0, G1;
-  uint *proxOrdem;
+  //uint *proxOrdem;
   vector<int>modGrau = grau;
+  vector<uint>copiaOrdem = ordem;
   // Usando M[0][0] como nosso v:
   // M0: v nao esta na solucao	
   vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));	
@@ -121,9 +122,10 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
   grau.erase(grau.begin());
 	
   //passa o vetor ordem como se comecasse do proximo elemento
-  proxOrdem = &(ordem[1]);
+  //proxOrdem = &(ordem[1]);
   //Chamar recursao M0
-  G0 = A1(n-1, M0, grau, seq_vert_ci, tempo_maximo, proxOrdem);
+  copiaOrdem.erase(copiaOrdem.begin());
+  G0 = A1(n-1, M0, grau, seq_vert_ci, tempo_maximo, copiaOrdem);
 	
 	
   // M1: v esta na solucao
@@ -144,7 +146,9 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
 
   //TODO jogar o v do topo de ordem em *seq_vert_ci; depois tam_ci++;
   //Chamar recursao M1
-  G1 = A1(n-1-adj, M1, modGrau, seq_vert_ci, tempo_maximo, proxOrdem)+1;
+  copiaOrdem = ordem;
+  copiaOrdem.erase(copiaOrdem.begin());
+  G1 = A1(n-1-adj, M1, modGrau, seq_vert_ci, tempo_maximo, copiaOrdem)+1;
   //pelo q eu entendi tem q comparar G0 com G1+1, mas nao tenho crtz
   if (G0 > G1)return G0;
   else{
@@ -160,25 +164,21 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
    * n 			=> 	Numero de vertices
    * M 			=> 	Matriz de adjacencia
    * grau 		=> 	Vetor com grau de cada vertice
-   * seq_vert_ci 	=> 	Vertices do CI
-   * tempo_maximo => 	Limite de tempo, em segundos, para um algoritmo encontrar o CI
+   * seq_vert_ci2 	=> 	Vertices do CI
+   * tempo_maximo       => 	Limite de tempo, em segundos, para um algoritmo encontrar o CI
+   * ordem              =>      Mantem a ordem dos elementos, para saber quais estao no CI
    */
 
   if(n <= 0 || grau.size() == 0) return 0;
   uint GN = 0, G0 = 0, G1 = 0, G3 = 0;
   uint MaxGN_0,MaxG1_3, Max;
   vector<uint> copiaOrdem = ordem;
-  //uint *proxOrdem;
-  short int flag = 1;
-  //u, grau1 = grau, grau3 = grau, grau0 = grau;
-  //passa o vetor ordem como se comecasse do proximo elemento
-  //proxOrdem = &(ordem[1]);
-
-  /*Na verdade esse for deveria procurar se ha um elemento
-  * com grau 0 ou 1 e propagar a recursao com eles. E nao,
-  * procurar o primeiro elemento com grau 0 ou 1, mas isso
-  * nao deve ser tao dificil de arrumar
-  */
+  short int flag = 1; //nao tenho crtz se essa variavel eh realmente necessaria
+  
+  /*verfica se ha um elemento com grau 0 ou 1 primeiro
+   *caso haja progamos a recursao com eles primeiro
+   *caso negativo mantemos a mesma logica do A1
+   */
   for(int k = 0; k < n; k++){
     //caso o grau seja 0, trivialmente ele estara na resposta
     if(grau[k] == 0){
@@ -229,8 +229,6 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
       seq_vert_ci2[ordem[0]] = 1;
   }
 
-//TODO adicionar os elementos do conjunto independente em seq_vert_ci2
-  
   MaxGN_0 = max(GN, G0);
   MaxG1_3 = max(G1, G3);
   Max = max(MaxG1_3, MaxGN_0);
@@ -271,12 +269,12 @@ int main (){
     
     //cout<<endl;
 
-    //cout<<A1(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci,0, ordem)<<endl<<endl;
-    cout<<A2(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci2,0, ordem)<<endl<<endl;
+    cout<<A1(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci,0, ordem)<<endl<<endl;
+    //cout<<A2(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci2,0, ordem)<<endl<<endl;
     //ajusta_ci(graph, (uint *)&seq_vert_ci2);
     for(uint i = 0; i < nmrDeVertices; i++)
       //cout<<ordem[i]<<" ";
-      cout<<seq_vert_ci2[i]<<" ";
+      cout<<seq_vert_ci[i]<<" ";
     
     graph = vector<vector<uint> >(graph.size(),vector<uint>(graph.size(),0));
   }
