@@ -313,7 +313,7 @@ int main (int argc,char **argv){
 	chamadas = 0;
 	seq_s_ci.clear();
 	convert.clear();
-    tam_ci = A2(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci2,100000, (uint *)&ordem);
+    tam_ci = A2(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci2,0, (uint *)&ordem);
     ajusta_ci(graph, (uint *)&seq_vert_ci2);
     for(uint i = 0; i < nmrDeVertices; i++)
 	{
