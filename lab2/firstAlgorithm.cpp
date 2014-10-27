@@ -187,34 +187,34 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
       G0 = A2(n-1, M0, grau0, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
       seq_vert_ci2[ordem[0]] = 1;
     }
+  }
+  for(int k = 0; k < n; k++){
     //caso grau seja 1, ele tb estara na resposta
-    else if(grau[k] == 1){
+    if(grau[k] == 1){
       vector<int> grau1 = grau;
       vector<vector<uint> >M1(n-2, vector<uint>(n-2,0));
       M1 = excluiAdjacentes(M, k, &grau1);
       G1 = A2(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
       seq_vert_ci2[ordem[0]] = 1;
     }
-    //de resto continua td igual
-    else{
-      vector<int> grauN = grau;
-      vector<vector<uint> >MN(n-1, vector<uint>(n-1,0));
-      MN = excluiVertice(M, k);
-      grauN.erase(grauN.begin()+k);
-      GN = A2(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, proxOrdem);
-      
-      vector<int> grau3 = grau;
-      uint adj = 0; // Numero de vertices adjacentes a v
-      for(uint i = 0; i < n; i++) if(M[i][k]) adj++;
-      vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
-      M3 = excluiAdjacentes(M, k, &grau3);
-      G3 = A2(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
-      //if(G3>GN)
-      //seq_vert_ci2[ordem[0]] = 1;
-    }
   }
+  //de resto continua td igual
+  vector<int> grauN = grau;
+  vector<vector<uint> >MN(n-1, vector<uint>(n-1,0));
+  MN = excluiVertice(M, 0);
+  grauN.erase(grauN.begin());
+  GN = A2(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, proxOrdem);
+  
+  vector<int> grau3 = grau;
+  uint adj = 0; // Numero de vertices adjacentes a v
+  for(uint i = 0; i < n; i++) if(M[i][0]) adj++;
+  vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
+  M3 = excluiAdjacentes(M, 0, &grau3);
+  G3 = A2(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, proxOrdem) + 1;
+  if(G3>GN)
+    seq_vert_ci2[ordem[0]] = 1;
 
-  //TODO adicionar os elementos do conjunto independente em seq_vert_ci2
+//TODO adicionar os elementos do conjunto independente em seq_vert_ci2
   
   MaxGN_0 = max(GN, G0);
   MaxG1_3 = max(G1, G3);
