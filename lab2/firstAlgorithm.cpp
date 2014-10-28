@@ -264,19 +264,23 @@ int main (int argc,char **argv){
   uint tam_ci = 0;
   std::string seq_s_ci;
   ostringstream convert;
-  vector<vector<uint> >graph(nmrDeVertices, vector<uint>(nmrDeVertices,0));
+  vector<vector<uint> >graph(nmrDeVertices, std::vector<uint>(0));
 	
   FILE *file, *fp;
   file = fopen("ra101354_122307.log", "w");
   fp = fopen(argv[0],"r");
   if (fp==NULL){printf("Erro para abrir arquivo %s\n.\n",argv[0]);return(0);}
-  fscanf(fp,"%u %u %u",&nmrDeGrafos, &nmrDeVertices, &nmrDeArestas);
+  fscanf(fp,"%d %d %d",&nmrDeGrafos, &nmrDeVertices, &nmrDeArestas);
+
+
+  vector<uint> ordem(nmrDeVertices, 0);
+  vector<int> grau(nmrDeVertices,0);
 
   totalGrafos = nmrDeGrafos;
   while(nmrDeGrafos--){
     uint  seq_vert_ci[nmrDeVertices], seq_vert_ci2[nmrDeVertices];
-    vector<uint> ordem(nmrDeVertices, 0);
-    vector<int> grau(nmrDeVertices,0);
+    ordem.clear();
+    grau.clear();
 
     for(int i = 0; i < nmrDeVertices; i++){
       //for(uint j = 0; j < nmrDeVertices; j++){
@@ -289,8 +293,9 @@ int main (int argc,char **argv){
     }	
     
     for(int arestas = 0; arestas < nmrDeArestas; arestas++){
-      fscanf(fp,"%u", &vertice);
-	  otoVertice = vertice;
+      fscanf(fp,"%d", &vertice);
+      fscanf(fp,"%d", &otoVertice);
+
       graph[vertice][otoVertice] = 1;
       graph[otoVertice][vertice] = 1;
       grau[vertice] += 1;
