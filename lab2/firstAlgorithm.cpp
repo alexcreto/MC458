@@ -244,6 +244,7 @@ uint A3(uint n, vector<vector<uint> > M, uint *tam_ci, uint *seq_vert_ci, uint t
 int main (int argc, char **argv){
 
   uint nmrDeGrafos, nmrDeVertices, nmrDeArestas, vertice, otoVertice, tam_ci, totalGrafos, chamadas = 0;
+  ostringstream elem;
   short int otimo = 1;
   FILE *file, *fp;
   file = fopen("ra101354_122307.log", "w");
@@ -286,13 +287,15 @@ int main (int argc, char **argv){
     //cout<<A1(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci,0, ordem)<<endl<<endl;
     tam_ci = A2(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci2,0, ordem);
     //ajusta_ci(graph, (uint *)&seq_vert_ci2);
+    elem <<"[";
     for(uint i = 0; i < nmrDeVertices; i++)
       if(seq_vert_ci2[i] == 1)
-	actualCI += ""+i;
+	elem << i <<",  ";
 
-    fprintf(file, "ra101354_122307 A1 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, actualCI.c_str());
+    elem<<"]";
+    fprintf(file, "ra101354_122307 A1 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
     
-    actualCI = "";
+    elem.str("");
     graph = vector<vector<uint> >(graph.size(),vector<uint>(graph.size(),0));
   }
   
