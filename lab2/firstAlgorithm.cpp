@@ -96,7 +96,7 @@ vector<vector<uint> > excluiAdjacentes(vector<vector<uint> > M, uint vertice, ve
 }
 
 
-uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, uint tempo_maximo, uint *ordem){
+uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, uint tempo_maximo, vector<uint> ordem){
   /*
    * n 			=> 	Numero de vertices
    * M 			=> 	Matriz de adjacencia
@@ -107,12 +107,12 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
 
   if(n <= 0) return 0;
   uint G0, G1;
-  uint *proxOrdem;
+  //uint *proxOrdem;
   vector<int>modGrau = grau;
   // Usando M[0][0] como nosso v:
   // M0: v nao esta na solucao	
   vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));	
-  
+  vector<uint> copiaOrdem = ordem;
   
 
   // for(uint i = 0; i < n-1; i++){	//Pega apenas as linhas e colunas que nao sao de v
@@ -123,9 +123,10 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
   grau.erase(grau.begin());
 	
   //passa o vetor ordem como se comecasse do proximo elemento
-  proxOrdem = &(ordem[1]);
+  //proxOrdem = &(ordem[1]);
   //Chamar recursao M0
-  G0 = A1(n-1, M0, grau, seq_vert_ci, tempo_maximo, proxOrdem);
+  copiaOrdem.erase(copiaOrdem.begin());
+  G0 = A1(n-1, M0, grau, seq_vert_ci, tempo_maximo, copiaOrdem);
 	
 	
   // M1: v esta na solucao
@@ -146,7 +147,9 @@ uint A1(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci, ui
 
   //TODO jogar o v do topo de ordem em *seq_vert_ci; depois tam_ci++;
   //Chamar recursao M1
-  G1 = A1(n-1-adj, M1, modGrau, seq_vert_ci, tempo_maximo, proxOrdem)+1;
+  copiaOrdem = ordem;
+  copiaOrdem.erase(copiaOrdem.begin());
+  G1 = A1(n-1-adj, M1, modGrau, seq_vert_ci, tempo_maximo, copiaOrdem)+1;
   //pelo q eu entendi tem q comparar G0 com G1+1, mas nao tenho crtz
   if (G0 > G1)return G0;
   else{
@@ -188,7 +191,7 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
       vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));
       M0 = excluiVertice(M, k);
       grau0.erase(grau0.begin()+k);
-      seq_vert_ci2[k] = 1;
+      seq_vert_ci2[ordem[k]] = 1;
       copiaOrdem.erase(copiaOrdem.begin()+k);
       G0 = A2(n-1, M0, grau0, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
       flag = 0;
@@ -202,7 +205,7 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
 	vector<int> grau1 = grau;
 	vector<vector<uint> >M1(n-2, vector<uint>(n-2,0));
 	M1 = excluiAdjacentes(M, k, &grau1);
-	seq_vert_ci2[k] = 1;
+	seq_vert_ci2[ordem[k]] = 1;
 	copiaOrdem.erase(copiaOrdem.begin()+k);
 	G1 = A2(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
 	flag = 0;
@@ -294,8 +297,19 @@ int main (int argc, char **argv){
 
     elem<<"]";
     fprintf(file, "ra101354_122307 A1 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
-    
     elem.str("");
+    
+    tam_ci = A1(nmrDeVertices, graph, grau,(uint *)&seq_vert_ci,0, ordem);
+    ajusta_ci(graph, (uint *)&seq_vert_ci);
+    elem <<"[";
+    for(uint i = 0; i < nmrDeVertices; i++)
+      if(seq_vert_ci[i] == 1)
+	elem << i <<",  ";
+
+    elem<<"]";
+    fprintf(file, "ra101354_122307 A2 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
+    elem.str("");
+
     graph = vector<vector<uint> >(graph.size(),vector<uint>(graph.size(),0));
   }
   
