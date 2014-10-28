@@ -301,7 +301,7 @@ uint A3(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
       grau0.erase(grau0.begin()+k);
       seq_vert_ci2[ordem[k]] = 1;
       copiaOrdem.erase(copiaOrdem.begin()+k);
-      G0 = A2(n-1, M0, grau0, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
+      G0 = A3(n-1, M0, grau0, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
       flag = 0;
       break;
     }
@@ -315,7 +315,7 @@ uint A3(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
 	M1 = excluiAdjacentes(M, k, &grau1);
 	seq_vert_ci2[ordem[k]] = 1;
 	copiaOrdem.erase(copiaOrdem.begin()+k);
-	G1 = A2(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
+	G1 = A3(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
 	flag = 0;
 	break;
       }
@@ -328,7 +328,7 @@ uint A3(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
     MN = excluiVertice(M, 0);
     grauN.erase(grauN.begin());
     copiaOrdem.erase(copiaOrdem.begin());
-    GN = A2(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, copiaOrdem);
+    GN = A3(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, copiaOrdem);
   
     vector<int> grau3 = grau;
     uint adj = 0; // Numero de vertices adjacentes a v
@@ -337,7 +337,7 @@ uint A3(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
     M3 = excluiAdjacentes(M, 0, &grau3);
     copiaOrdem = ordem;
     copiaOrdem.erase(copiaOrdem.begin());
-    G3 = A2(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
+    G3 = A3(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
     if(G3>GN)
       seq_vert_ci2[ordem[0]] = 1;
   }
