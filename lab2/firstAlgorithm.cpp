@@ -190,6 +190,7 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
   uint GN = 0, G0 = 0, G1 = 0, G3 = 0;
   uint MaxGN_0,MaxG1_3, Max;
   vector<uint> copiaOrdem = ordem;
+  short int flag = 1; //nao tenho crtz se essa variavel eh realmente necessaria
   
   /*verfica se ha um elemento com grau 0 ou 1 primeiro
    *caso haja progamos a recursao com eles primeiro
@@ -203,35 +204,48 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
       vector<vector<uint> >M0(n-1, vector<uint>(n-1,0));
       M0 = excluiVertice(M, k);
       grau0.erase(grau0.begin()+k);
+      seq_vert_ci2[k] = 1;
+      copiaOrdem.erase(copiaOrdem.begin()+k);
       G0 = A2(n-1, M0, grau0, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
-      seq_vert_ci2[ordem[0]] = 1;
+      flag = 0;
+      break;
     }
   }
-  for(uint k = 0; k < n; k++){
-    //caso grau seja 1, ele tb estara na resposta
-    if(grau[k] == 1){
-      vector<int> grau1 = grau;
-      vector<vector<uint> >M1(n-2, vector<uint>(n-2,0));
-      M1 = excluiAdjacentes(M, k, &grau1);
-      G1 = A2(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
-      seq_vert_ci2[ordem[0]] = 1;
+  if(flag){
+    for(uint k = 0; k < n; k++){
+      //caso grau seja 1, ele tb estara na resposta
+      if(grau[k] == 1){
+	vector<int> grau1 = grau;
+	vector<vector<uint> >M1(n-2, vector<uint>(n-2,0));
+	M1 = excluiAdjacentes(M, k, &grau1);
+	seq_vert_ci2[k] = 1;
+	copiaOrdem.erase(copiaOrdem.begin()+k);
+	G1 = A2(n-2, M1, grau1, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
+	flag = 0;
+	break;
+      }
     }
   }
-  //de resto continua td igual
-  vector<int> grauN = grau;
-  vector<vector<uint> >MN(n-1, vector<uint>(n-1,0));
-  MN = excluiVertice(M, 0);
-  grauN.erase(grauN.begin());
-  GN = A2(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, copiaOrdem);
+  if(flag){
+    //de resto continua td igual
+    vector<int> grauN = grau;
+    vector<vector<uint> >MN(n-1, vector<uint>(n-1,0));
+    MN = excluiVertice(M, 0);
+    grauN.erase(grauN.begin());
+    copiaOrdem.erase(copiaOrdem.begin());
+    GN = A2(n-1, MN, grauN, seq_vert_ci2, tempo_maximo, copiaOrdem);
   
-  vector<int> grau3 = grau;
-  uint adj = 0; // Numero de vertices adjacentes a v
-  for(uint i = 0; i < n; i++) if(M[i][0]) adj++;
-  vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
-  M3 = excluiAdjacentes(M, 0, &grau3);
-  G3 = A2(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
-  if(G3>GN)
-    seq_vert_ci2[ordem[0]] = 1;
+    vector<int> grau3 = grau;
+    uint adj = 0; // Numero de vertices adjacentes a v
+    for(uint i = 0; i < n; i++) if(M[i][0]) adj++;
+    vector<vector<uint> >M3(n-1-adj, vector<uint>(n-1-adj,0));
+    M3 = excluiAdjacentes(M, 0, &grau3);
+    copiaOrdem = ordem;
+    copiaOrdem.erase(copiaOrdem.begin());
+    G3 = A2(n-1-adj, M3, grau3, seq_vert_ci2, tempo_maximo, copiaOrdem) + 1;
+    if(G3>GN)
+      seq_vert_ci2[ordem[0]] = 1;
+  }
 
   MaxGN_0 = max(GN, G0);
   MaxG1_3 = max(G1, G3);
