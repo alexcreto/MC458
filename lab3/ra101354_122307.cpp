@@ -1,5 +1,7 @@
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
@@ -12,6 +14,7 @@ using namespace std;
 void quickSortH2(int q2[], int left, int right, int div) {
 	
 	int len = right - left;
+	int pivot1, pivot2, pivot3, pivot4, pivot5;
 
 	if (len < 27) {
 		for (int i = left + 1; i <= right; i++) {
@@ -42,12 +45,13 @@ void quickSortH2(int q2[], int left, int right, int div) {
 		swap(q2[m2], q2[left]);
 	}
 	// pivots
-	int pivot1 = q2[left];
-	int pivot2 = q2[right];	int pivot2 = q2[right];
-	int pivot2 = q2[right];
-	int pivot2 = q2[right];
-	int pivot2 = q2[right];
-
+	do {
+		pivot1 = q2[rand() % (sizeof(q2)/sizeof(int))];
+		pivot2 = q2[rand() % (sizeof(q2)/sizeof(int))];
+		pivot3 = q2[rand() % (sizeof(q2)/sizeof(int))];
+		pivot4 = q2[rand() % (sizeof(q2)/sizeof(int))];
+		pivot5 = q2[rand() % (sizeof(q2)/sizeof(int))];
+	} while(pivot1 != pivot2 && pivot2 !=pivot3 && pivot3 != pivot4 && pivot4 != pivot5);
 
 	// pointers
 	int less  = left  + 1;
@@ -55,7 +59,7 @@ void quickSortH2(int q2[], int left, int right, int div) {
 
 	// sorting
 	for (int k = less; k <= great; k++) {
-		if (q2[k] < pivot1) {
+		if (q2[k] < pivot4) {
 			swap(q2[k], q2[less++]);
 		} 
 		else if (q2[k] > pivot2) {
@@ -64,7 +68,7 @@ void quickSortH2(int q2[], int left, int right, int div) {
 			}
 			swap(q2[k], q2[great--]);
 
-			if (q2[k] < pivot1) {
+			if (q2[k] < pivot4) {
 				swap(q2[k], q2[less++]);
 			}
 		}
@@ -83,22 +87,22 @@ void quickSortH2(int q2[], int left, int right, int div) {
 	quickSortH2(q2, great + 2, right, div);
 
 	// equal elements
-	if (dist > len - 13 && pivot1 != pivot2) {
+	if (dist > len - 13 && pivot4 != pivot2) {
 		for (int k = less; k <= great; k++) {
-			if (q2[k] == pivot1) {
+			if (q2[k] == pivot4) {
 				swap(q2[k], q2[less++]);
 			}
 			else if (q2[k] == pivot2) {
 				swap(q2[k], q2[great--]);
 
-				if (q2[k] == pivot1) {
+				if (q2[k] == pivot4) {
 					swap(q2[k], q2[less++]);
 				}
 			}
 		}
 	}
 	// subarray
-	if (pivot1 < pivot2) {
+	if (pivot4 < pivot2) {
 		quickSortH2(q2, less, great, div);
 	}
 }
@@ -223,10 +227,46 @@ int partition1(vector<int>& q1, int p,int q) {
     return i;
 }
 
+void quickSort1(vector<int>& q1, int left,int right) {
+	
+    int div;
+	if(left < right) {
+        div = partition1(q1, left, right);
+        quickSort1(q1, left, div);  
+        quickSort1(q1, div+1, right);
+    }
+}
+
 
 /***************/
 /* QUICKSORT H1 */
 /***************/
+
+int partitionH1(vector<int>& q1, int p,int q) {
+
+    int i=p;
+    int j;
+	int pivot1, pivot2, pivot3;
+
+	do {
+		pivot1 = q1[rand() % (sizeof(q1)/sizeof(int))];
+		pivot2 = q1[rand() % (sizeof(q1)/sizeof(int))];
+		pivot3 = q1[rand() % (sizeof(q1)/sizeof(int))];
+	} while(pivot1 != pivot2 && pivot2 !=pivot3);
+	
+	for(j=p+1; j<q; j++) {
+    
+		if(q1[j]<=pivot2){
+        
+            i=i+1;
+            swap(q1[i],q1[j]);
+        }
+
+    }
+
+    swap(q1[i],q1[p]);
+    return i;
+}
 
 void quickSortH1(vector<int>& q1, int left,int right) {
 	
@@ -242,19 +282,9 @@ void quickSortH1(vector<int>& q1, int left,int right) {
 	
     int div;
 	if(left < right) {
-        div = partition1(q1, left, right);
+        div = partitionH1(q1, left, right);
         quickSortH1(q1, left, div);  
         quickSortH1(q1, div+1, right);
-    }
-}
-
-void quickSort1(vector<int>& q1, int left,int right) {
-	
-    int div;
-	if(left < right) {
-        div = partition1(q1, left, right);
-        quickSort1(q1, left, div);  
-        quickSort1(q1, div+1, right);
     }
 }
 
