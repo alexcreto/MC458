@@ -5,18 +5,47 @@
 
 using namespace std;
 
-
 /***************/
+/* QUICKSORT 2 */
+/***************/
+
+int lesser(int v, int w) {
+	if (v < w)
+		return 1;
+	else return 0;
+    }
+
+void quickSort2(int* q2, int left, int right) { 
+	
+	if (right <= left) return;
+
+	if (lesser(q2[right], q2[left])) swap(q2[left], q2[right]);
+
+	int lt = left + 1, gt = right - 1;
+	int i = left + 1;
+	while (i <= gt) {
+		if       (lesser(q2[i], q2[left])) swap(q2[lt++], q2[i++]);
+		else if  (lesser(q2[right], q2[i])) swap(q2[i], q2[gt--]);
+			else i++;
+	}
+	swap(q2[left], q2[--lt]);
+	swap(q2[right], q2[++gt]);
+
+	// recursively sort three subarrays
+	quickSort2(q2, left, lt-1);
+	if (lesser(q2[lt], q2[gt])) quickSort2 (q2, lt+1, gt-1);
+	quickSort2(q2, gt+1, right);
+
+}
+
+
+/****************/
 /* QUICKSORT H2 */
-/***************/
-
-
-void quickSortH2(int* q2, int left, int right, int div) {
+/****************/
+void quickSortH2(int* q2, int left, int right) { 
 	
 	int len = right - left;
-	int pivot1, pivot2, pivot3, pivot4, pivot5;
-
-	if (len < 27) {
+	if (len < 27) {							// Insertion Sort
 		for (int i = left + 1; i <= right; i++) {
 			for (int j = i; j > left && q2[j] < q2[j - 1]; j--) {
 				swap(q2[j], q2[j - 1]);
@@ -24,187 +53,56 @@ void quickSortH2(int* q2, int left, int right, int div) {
 		}
 		return;
 	}
-	int third = len / div;
-
-								// Tira as medias
-	int m1 = left  + third;
-	int m2 = right - third;
-
-	if (m1 <= left) {
-		m1 = left + 1;
-	}
-	if (m2 >= right) {
-		m2 = right - 1;
-	}
-	if (q2[m1] < q2[m2]) {
-		swap(q2[m1], q2[left]);
-		swap(q2[m2], q2[right]);
-	}
-	else {
-		swap(q2[m1], q2[right]);
-		swap(q2[m2], q2[left]);
-	}
 	
-								// Calcula os Pivos de forma aleatoria
+	int pivot1, pivot2, pivot3, pivot4, pivot5;
+	int r1, r2, r3, r4, r5;
+
 	do {
-		pivot1 = q2[rand() % right];
-		pivot2 = q2[rand() % right];
-		pivot3 = q2[rand() % right];
-		pivot4 = q2[rand() % right];
-		pivot5 = q2[rand() % right];
+		r1 = rand() % right;
+		r2 = rand() % right;
+		r3 = rand() % right;
+		r4 = rand() % right;
+		r5 = rand() % right;
+		pivot1 = q2[r1];
+		pivot2 = q2[r2];
+		pivot3 = q2[r3];
+		pivot4 = q2[r4];
+		pivot5 = q2[r5];
 	} while(pivot1 == pivot2 || pivot2 == pivot3 || pivot3 == pivot4 || pivot4 == pivot5 || pivot5 == pivot1);
 
 	int pivots[] = {pivot1, pivot2, pivot3, pivot4, pivot5};
+	int indexes[] = {r1, r2, r3, r4, r5};
 	
-	for (int i = 0; i < 5; i++) 
-		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) 
-			swap(pivots[j], pivots[j - 1]);
-	
-								// Ponteiros
-	int less  = left;
-	int great = right;
-
-								// Ordenacao
-	for (int k = less; k < great; k++) {
-		if (q2[k] < pivots[2]) {
-			swap(q2[k], q2[less++]);
-		} 
-		else if (q2[k] > pivots[4]) {
-			while (k < great && q2[great] > pivots[4]) {
-				great--;
-			}
-			swap(q2[k], q2[great--]);
-
-			if (q2[k] < pivots[2]) {
-				swap(q2[k], q2[less++]);
-			}
+	for (int i = 0; i < 5; i++) {
+		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) {
+			swap(pivots[j], pivots[j - 1]);	
+			swap(indexes[j], indexes[j - 1]);
 		}
 	}
 	
-								// Trocas
-	int dist = great - less;
+	swap(q2[left], q2[indexes[2]]);
+	swap(q2[right], q2[indexes[4]]);
 
-	if (dist < 13) {
-	   div++;
+		
+	if (right <= left) return;
+
+	if (lesser(q2[right], q2[left])) swap(q2[left], q2[right]);
+
+	int lt = left + 1, gt = right - 1;
+	int i = left + 1;
+	while (i <= gt) {
+		if       (lesser(q2[i], q2[left])) swap(q2[lt++], q2[i++]);
+		else if  (lesser(q2[right], q2[i])) swap(q2[i], q2[gt--]);
+			else i++;
 	}
-	swap(q2[less  - 1], q2[left]);
-	swap(q2[great + 1], q2[right]);
+	swap(q2[left], q2[--lt]);
+	swap(q2[right], q2[++gt]);
 
-								// Subarrays
-	quickSortH2(q2, left,   less - 2, div);
-	quickSortH2(q2, great + 2, right, div);
+	// recursively sort three subarrays
+	quickSort2(q2, left, lt-1);
+	if (lesser(q2[lt], q2[gt])) quickSort2 (q2, lt+1, gt-1);
+	quickSort2(q2, gt+1, right);
 
-								// Elementos de mesmo valor
-	if (dist > len - 13 && pivots[2] != pivots[4]) {
-		for (int k = less; k <= great; k++) {
-			if (q2[k] == pivots[2]) {
-				swap(q2[k], q2[less++]);
-			}
-			else if (q2[k] == pivots[4]) {
-				swap(q2[k], q2[great--]);
-
-				if (q2[k] == pivots[2]) {
-					swap(q2[k], q2[less++]);
-				}
-			}
-		}
-	}
-	
-								// Subarrays
-	if (pivots[2] < pivots[4]) {
-		quickSortH2(q2, less, great, div);
-	}
-}
-
-
-/***************/
-/* QUICKSORT 2 */
-/***************/
-
-void quickSort2(int* q2, int left, int right, int div) {
-	
-	int len = right - left;
-
-	if (len < 2) return;
-	
-	int third = len / div;
-
- 								// Tira as medias
-	int m1 = left  + third;
-	int m2 = right - third;
-
-	if (m1 <= left) {
-		m1 = left + 1;
-	}
-	if (m2 >= right) {
-		m2 = right - 1;
-	}
-	if (q2[m1] < q2[m2]) {
-		swap(q2[m1], q2[left]);
-		swap(q2[m2], q2[right]);
-	}
-	else {
-		swap(q2[m1], q2[right]);
-		swap(q2[m2], q2[left]);
-	}
-	
-								// Calcula os Pivos
-	int pivot1 = q2[left];
-	int pivot2 = q2[right];
-
-								// Ponteiros
-	int less  = left  + 1;
-	int great = right - 1;
-
-								// Ordenacao
-	for (int k = less; k <= great; k++) {
-		if (q2[k] < pivot1) {
-			swap(q2[k], q2[less++]);
-		} 
-		else if (q2[k] > pivot2) {
-			while (k < great && q2[great] > pivot2) {
-				great--;
-			}
-			swap(q2[k], q2[great--]);
-
-			if (q2[k] < pivot1) {
-				swap(q2[k], q2[less++]);
-			}
-		}
-	}
-								// Trocas
-	int dist = great - less;
-
-	if (dist < 13) {
-	   div++;
-	}
-	swap(q2[less  - 1], q2[left]);
-	swap(q2[great + 1], q2[right]);
-
-								// Subarrays
-	quickSort2(q2, left,   less - 2, div);
-	quickSort2(q2, great + 2, right, div);
-
-								// Elementos de mesmo valor
-	if (dist > len - 13 && pivot1 != pivot2) {
-		for (int k = less; k <= great; k++) {
-			if (q2[k] == pivot1) {
-				swap(q2[k], q2[less++]);
-			}
-			else if (q2[k] == pivot2) {
-				swap(q2[k], q2[great--]);
-
-				if (q2[k] == pivot1) {
-					swap(q2[k], q2[less++]);
-				}
-			}
-		}
-	}
-
-								// Subarrays
-	if (pivot1 < pivot2) {
-		quickSort2(q2, less, great, div);
-	}
 }
 
 
@@ -307,12 +205,13 @@ int main() {
     left = 0;
     right = sizeof(q1)/sizeof(int);
 	div = sizeof(q1)/sizeof(int)/2; 
-
+	
+ 	cout<<endl<<"======Original======="<<endl;
     for(int i = 0; i < sizeof(q1)/sizeof(int); i++)
         cout<< q1[i] <<" ";
     cout<< endl;    
 
-    quickSort1(q1,left,right);
+    quickSort1(q1, left,right);
 
  	cout<<endl<<"======QuickSort - 1 Pivo======="<<endl;
     for(int i = 0; i < sizeof(q1)/sizeof(int); i++)
@@ -329,7 +228,7 @@ int main() {
     right = sizeof(q2)/sizeof(int);
 	div = sizeof(q2)/sizeof(int)/2; 
 	
-    quickSort2(q2,left, right, div);
+    quickSort2(q2, left, right);
 
     cout<<endl<<"======QuickSort - 2 Pivos======="<<endl;
     for(int i = 0; i < sizeof(q2)/sizeof(int); i++)
@@ -346,7 +245,7 @@ int main() {
     right = sizeof(qh1)/sizeof(int);
 	div = sizeof(qh1)/sizeof(int)/2;   
 
-    quickSortH1(qh1,left,right);
+    quickSortH1(qh1, left,right);
 
     cout<<endl<<"======QuickSort Hibrido - 1 Pivo======="<<endl;
     for(int i = 0; i < sizeof(qh1)/sizeof(int); i++)
@@ -363,7 +262,7 @@ int main() {
     right = sizeof(qh2)/sizeof(int);
 	div = sizeof(qh2)/sizeof(int)/2; 
 
-    quickSortH2(qh2,left, right, div);
+    quickSortH2(qh2, left, right);
 
     cout<<endl<<"======QuickSort Hibrido - 2 Pivos======="<<endl;
     for(int i = 0; i < sizeof(qh2)/sizeof(int); i++)
