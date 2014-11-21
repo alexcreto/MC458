@@ -56,16 +56,16 @@ void quickSortH2(int* q2, int left, int right, int div) {
 
 	int pivots[] = {pivot1, pivot2, pivot3, pivot4, pivot5};
 	
-	for (int i = 1; i <= 5; i++) 
+	for (int i = 0; i < 5; i++) 
 		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) 
 			swap(pivots[j], pivots[j - 1]);
 	
 								// Ponteiros
-	int less  = left  + 1;
-	int great = right - 1;
+	int less  = left;
+	int great = right;
 
 								// Ordenacao
-	for (int k = less; k <= great; k++) {
+	for (int k = less; k < great; k++) {
 		if (q2[k] < pivots[2]) {
 			swap(q2[k], q2[less++]);
 		} 
@@ -125,14 +125,8 @@ void quickSort2(int* q2, int left, int right, int div) {
 	
 	int len = right - left;
 
-	if (len < 27) {
-		for (int i = left + 1; i <= right; i++) {
-			for (int j = i; j > left && q2[j] < q2[j - 1]; j--) {
-				swap(q2[j], q2[j - 1]);
-			}
-		}
-		return;
-	}
+	if (len < 2) return;
+	
 	int third = len / div;
 
  								// Tira as medias
