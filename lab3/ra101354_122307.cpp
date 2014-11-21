@@ -53,22 +53,53 @@ void quickSortH2(int q2[], int left, int right, int div) {
 		pivot5 = q2[rand() % (sizeof(q2)/sizeof(int))];
 	} while(pivot1 != pivot2 && pivot2 !=pivot3 && pivot3 != pivot4 && pivot4 != pivot5);
 
+	int pivots[] = {pivot1, pivot2, pivot3, pivot4, pivot5};
+	
+	
+	
+	
+
+    cout<< endl; 
+	for(int i = 0; i < sizeof(pivots)/sizeof(int); i++)
+        cout<< pivots[i] <<" ";
+    cout<< endl;
+	
+	
+	
+	
+	
+	for (int i = 1; i <= 5; i++) {
+		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) {
+			swap(pivots[j], pivots[j - 1]);
+		}
+	}
+	
+	
+	
+    cout<< endl; 
+    cout<< endl; 
+	for(int i = 0; i < sizeof(pivots)/sizeof(int); i++)
+        cout<< pivots[i] <<" ";
+    cout<< endl; 
+	
+	
+	
 	// pointers
 	int less  = left  + 1;
 	int great = right - 1;
 
 	// sorting
 	for (int k = less; k <= great; k++) {
-		if (q2[k] < pivot4) {
+		if (q2[k] < pivots[2]) {
 			swap(q2[k], q2[less++]);
 		} 
-		else if (q2[k] > pivot2) {
-			while (k < great && q2[great] > pivot2) {
+		else if (q2[k] > pivots[4]) {
+			while (k < great && q2[great] > pivots[4]) {
 				great--;
 			}
 			swap(q2[k], q2[great--]);
 
-			if (q2[k] < pivot4) {
+			if (q2[k] < pivots[2]) {
 				swap(q2[k], q2[less++]);
 			}
 		}
@@ -87,22 +118,22 @@ void quickSortH2(int q2[], int left, int right, int div) {
 	quickSortH2(q2, great + 2, right, div);
 
 	// equal elements
-	if (dist > len - 13 && pivot4 != pivot2) {
+	if (dist > len - 13 && pivots[2] != pivots[4]) {
 		for (int k = less; k <= great; k++) {
-			if (q2[k] == pivot4) {
+			if (q2[k] == pivots[2]) {
 				swap(q2[k], q2[less++]);
 			}
-			else if (q2[k] == pivot2) {
+			else if (q2[k] == pivots[4]) {
 				swap(q2[k], q2[great--]);
 
-				if (q2[k] == pivot4) {
+				if (q2[k] == pivots[2]) {
 					swap(q2[k], q2[less++]);
 				}
 			}
 		}
 	}
 	// subarray
-	if (pivot4 < pivot2) {
+	if (pivots[2] < pivots[4]) {
 		quickSortH2(q2, less, great, div);
 	}
 }
@@ -207,7 +238,7 @@ void quickSort2(int q2[], int left, int right, int div) {
 /* QUICKSORT 1 */
 /***************/
 
-int partition1(vector<int>& q1, int p,int q) {
+int partition1(int q1[], int p,int q) {
 
     int x= q1[p];
     int i=p;
@@ -227,7 +258,7 @@ int partition1(vector<int>& q1, int p,int q) {
     return i;
 }
 
-void quickSort1(vector<int>& q1, int left,int right) {
+void quickSort1(int q1[], int left,int right) {
 	
     int div;
 	if(left < right) {
@@ -242,10 +273,10 @@ void quickSort1(vector<int>& q1, int left,int right) {
 /* QUICKSORT H1 */
 /***************/
 
-int partitionH1(vector<int>& q1, int p,int q) {
+int partitionH1(int q1[], int p,int q) {
 
     int i=p;
-    int j;
+    int j, x;
 	int pivot1, pivot2, pivot3;
 
 	do {
@@ -254,9 +285,16 @@ int partitionH1(vector<int>& q1, int p,int q) {
 		pivot3 = q1[rand() % (sizeof(q1)/sizeof(int))];
 	} while(pivot1 != pivot2 && pivot2 !=pivot3);
 	
+	if (pivot1 >= pivot2 && pivot2 >= pivot3)
+		x = pivot2;
+	else if (pivot2 >= pivot3 && pivot3 >= pivot1)
+		x = pivot3;
+		else
+			x = pivot1;
+	
 	for(j=p+1; j<q; j++) {
     
-		if(q1[j]<=pivot2){
+		if(q1[j]<=x){
         
             i=i+1;
             swap(q1[i],q1[j]);
@@ -268,7 +306,7 @@ int partitionH1(vector<int>& q1, int p,int q) {
     return i;
 }
 
-void quickSortH1(vector<int>& q1, int left,int right) {
+void quickSortH1(int q1[], int left,int right) {
 	
 	int len = right - left;
 	if (len < 27) {
@@ -298,16 +336,16 @@ int main() {
 	
  	cout<<endl<<"======QuickSort - 1 Pivo======="<<endl;
 
-	std::vector<int> q1 (myints, myints + sizeof(myints) / sizeof(int) );
+	int q1[] = {6,10,13,5,8,3,2,25,4,11};
 
-    for(int i = 0; i < q1.size(); i++)
+    for(int i = 0; i < sizeof(q1)/sizeof(int); i++)
         cout<< q1[i] <<" ";
     cout<< endl;    
 
     quickSort1(q1,left,right);
 
     cout<<"=======Sorted========"<<endl;
-    for(int i = 0; i < q1.size(); i++)
+    for(int i = 0; i < sizeof(q1)/sizeof(int); i++)
         cout<< q1[i] <<" ";
     cout<< endl;   	
 	
@@ -332,16 +370,16 @@ int main() {
 	
  	cout<<endl<<"======QuickSort Hibrido - 1 Pivo======="<<endl;
 
-	std::vector<int> qh1 (myints, myints + sizeof(myints) / sizeof(int) );
+	int qh1[] = {6,10,13,5,8,3,2,25,4,11};
 
-    for(int i = 0; i < qh1.size(); i++)
+    for(int i = 0; i < sizeof(qh1)/sizeof(int); i++)
         cout<< qh1[i] <<" ";
     cout<< endl;    
 
     quickSortH1(qh1,left,right);
 
     cout<<"=======Sorted========"<<endl;
-    for(int i = 0; i < qh1.size(); i++)
+    for(int i = 0; i < sizeof(qh1)/sizeof(int); i++)
         cout<< qh1[i] <<" ";
     cout<< endl; 
 	
