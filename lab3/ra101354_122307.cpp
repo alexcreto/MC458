@@ -217,7 +217,6 @@ int main() {
 		
     int left = 0;
     int right = 10;
-	int div = 5;
 
 	
 
@@ -225,7 +224,6 @@ int main() {
 	int q1[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(q1)/sizeof(int);
-	div = sizeof(q1)/sizeof(int)/2; 
 	
  	cout<<endl<<"======Original======="<<endl;
     for(int i = 0; i < sizeof(q1)/sizeof(int); i++)
@@ -247,7 +245,6 @@ int main() {
 	int q2[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(q2)/sizeof(int);
-	div = sizeof(q2)/sizeof(int)/2; 
 	
     quickSort2(q2, left, right);
 
@@ -263,8 +260,7 @@ int main() {
 
 	int qh1[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
-    right = sizeof(qh1)/sizeof(int);
-	div = sizeof(qh1)/sizeof(int)/2;   
+    right = sizeof(qh1)/sizeof(int);  
 
     quickSortH1(qh1, left,right);
 
@@ -281,7 +277,6 @@ int main() {
 	int qh2[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(qh2)/sizeof(int);
-	div = sizeof(qh2)/sizeof(int)/2; 
 
     quickSortH2(qh2, left, right);
 
