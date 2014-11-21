@@ -356,9 +356,8 @@ uint A3(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
 
 int main (int argc, char **argv){
 
-  uint nmrDeGrafos, nmrDeVertices, nmrDeArestas, vertice, otoVertice, tam_ci, totalGrafos, chamadas = 0;
+  uint nmrDeGrafos, nmrDeVertices, nmrDeArestas, vertice, otoVertice, tam_ci, totalGrafos;
   ostringstream elem;
-  short int otimo = 1;
   FILE *file, *fp;
   file = fopen("ra101354_122307.log", "w");
   fp = fopen(argv[1],"r");
@@ -408,6 +407,7 @@ int main (int argc, char **argv){
     elem<<"]";
     fprintf(file, "ra101354_122307 A1 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
     elem.str("");
+
     
 	tempo = clock();
 	chamadas = 0;
@@ -422,6 +422,7 @@ int main (int argc, char **argv){
     elem<<"]";
     fprintf(file, "ra101354_122307 A2 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
     elem.str("");
+
     
 	tempo = clock();
 	chamadas = 0;
@@ -434,8 +435,9 @@ int main (int argc, char **argv){
 		elem << i <<",  ";
 
     elem<<"]";
-    fprintf(file, "ra101354_122307 A3 %s %d %d %d %u %u %u %s\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
+    fprintf(file, "ra101354_122307 A3 %s %d %d %d %u %u %u %s\n\n", argv[1], (totalGrafos-nmrDeGrafos), nmrDeVertices, nmrDeArestas, otimo, chamadas, tam_ci, elem.str().c_str());
     elem.str("");
+
 
     graph = vector<vector<uint> >(graph.size(),vector<uint>(graph.size(),0));
   }
