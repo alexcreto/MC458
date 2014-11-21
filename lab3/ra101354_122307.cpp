@@ -47,12 +47,12 @@ void quickSortH2(int* q2, int left, int right, int div) {
 	
 								// Calcula os Pivos de forma aleatoria
 	do {
-		pivot1 = q2[rand() % (sizeof(q2)/sizeof(int))];
-		pivot2 = q2[rand() % (sizeof(q2)/sizeof(int))];
-		pivot3 = q2[rand() % (sizeof(q2)/sizeof(int))];
-		pivot4 = q2[rand() % (sizeof(q2)/sizeof(int))];
-		pivot5 = q2[rand() % (sizeof(q2)/sizeof(int))];
-	} while(pivot1 == pivot2 || pivot2 ==pivot3 || pivot3 == pivot4 || pivot4 == pivot5 || pivot5 == pivot1);
+		pivot1 = q2[rand() % right];
+		pivot2 = q2[rand() % right];
+		pivot3 = q2[rand() % right];
+		pivot4 = q2[rand() % right];
+		pivot5 = q2[rand() % right];
+	} while(pivot1 == pivot2 || pivot2 == pivot3 || pivot3 == pivot4 || pivot4 == pivot5 || pivot5 == pivot1);
 
 	int pivots[] = {pivot1, pivot2, pivot3, pivot4, pivot5};
 	
@@ -209,7 +209,7 @@ void quickSort2(int* q2, int left, int right, int div) {
 
 								// Subarrays
 	if (pivot1 < pivot2) {
-		quickSortH2(q2, less, great, div);
+		quickSort2(q2, less, great, div);
 	}
 }
 
@@ -261,15 +261,12 @@ int partitionH1(int* q1, int left,int right) {
 
 											// Escolha de pivos aleatoria
 	do {
-		pivot1 = q1[rand() % (sizeof(q1)/sizeof(int))];
-		pivot2 = q1[rand() % (sizeof(q1)/sizeof(int))];
-		pivot3 = q1[rand() % (sizeof(q1)/sizeof(int))];
+		pivot1 = q1[rand() % right];
+		pivot2 = q1[rand() % right];
+		pivot3 = q1[rand() % right];
 	} while(pivot1 == pivot2 || pivot2 == pivot3 || pivot3 == pivot1);
 	
 	int pivots[] = {pivot1, pivot2, pivot3};
-	for(int i = 0; i < sizeof(pivots)/sizeof(int); i++)
-        cout<< pivots[i] <<" ";
-    cout<< endl; 
 											// Insertion Sort nos pivos
 	for (int i = 1; i <= 3; i++) 
 		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) 
@@ -310,9 +307,9 @@ int main() {
 	int div = 5;
 
 	
- 	cout<<endl<<"======QuickSort - 1 Pivo======="<<endl;
 
-	int q1[] = {6,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11};
+
+	int q1[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(q1)/sizeof(int);
 	div = sizeof(q1)/sizeof(int)/2; 
@@ -323,7 +320,7 @@ int main() {
 
     quickSort1(q1,left,right);
 
-    cout<<"=======Sorted========"<<endl;
+ 	cout<<endl<<"======QuickSort - 1 Pivo======="<<endl;
     for(int i = 0; i < sizeof(q1)/sizeof(int); i++)
         cout<< q1[i] <<" ";
     cout<< endl;
@@ -331,20 +328,16 @@ int main() {
 	
 	
 	
-    cout<<endl<<"======QuickSort - 2 Pivos======="<<endl;
+
 	
-	int q2[] = {6,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11};
+	int q2[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(q2)/sizeof(int);
 	div = sizeof(q2)/sizeof(int)/2; 
-
-    for(int i = 0; i < sizeof(q2)/sizeof(int); i++)
-        cout<< q2[i] <<" ";
-    cout<< endl;    
-
+	
     quickSort2(q2,left, right, div);
 
-    cout<<"=======Sorted========"<<endl;
+    cout<<endl<<"======QuickSort - 2 Pivos======="<<endl;
     for(int i = 0; i < sizeof(q2)/sizeof(int); i++)
         cout<< q2[i] <<" ";
     cout<< endl; 	
@@ -352,20 +345,16 @@ int main() {
 	
 	
 	
- 	cout<<endl<<"======QuickSort Hibrido - 1 Pivo======="<<endl;
 
-	int qh1[] = {6,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11};
+
+	int qh1[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(qh1)/sizeof(int);
-	div = sizeof(qh1)/sizeof(int)/2; 
-
-    for(int i = 0; i < sizeof(qh1)/sizeof(int); i++)
-        cout<< qh1[i] <<" ";
-    cout<< endl;    
+	div = sizeof(qh1)/sizeof(int)/2;   
 
     quickSortH1(qh1,left,right);
 
-    cout<<"=======Sorted========"<<endl;
+    cout<<endl<<"======QuickSort Hibrido - 1 Pivo======="<<endl;
     for(int i = 0; i < sizeof(qh1)/sizeof(int); i++)
         cout<< qh1[i] <<" ";
     cout<< endl; 
@@ -373,20 +362,16 @@ int main() {
 		
 	
 	
-    cout<<endl<<"======QuickSort Hibrido - 2 Pivos======="<<endl;
+
 	
-	int qh2[] = {6,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11,10,13,5,8,3,2,25,4,11};
+	int qh2[] = {6,10,13,5,8,3,2,29,4,11,10,13,59,8,3,34,48,4,11,10,13,5,8,3,4,45,4,11,10,13,53,8,3,32,25,4,11,10,13,15,8,3,2,25,4,11,10,13,5,18,3,22,25,44,11};
     left = 0;
     right = sizeof(qh2)/sizeof(int);
 	div = sizeof(qh2)/sizeof(int)/2; 
 
-    for(int i = 0; i < sizeof(qh2)/sizeof(int); i++)
-        cout<< qh2[i] <<" ";
-    cout<< endl;    
-
     quickSortH2(qh2,left, right, div);
 
-    cout<<"=======Sorted========"<<endl;
+    cout<<endl<<"======QuickSort Hibrido - 2 Pivos======="<<endl;
     for(int i = 0; i < sizeof(qh2)/sizeof(int); i++)
         cout<< qh2[i] <<" ";
     cout<< endl;  
