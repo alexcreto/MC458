@@ -56,7 +56,8 @@ void quickSortH2(int* q2, int left, int right) {
 	
 	int pivot1, pivot2, pivot3, pivot4, pivot5;
 	int r1, r2, r3, r4, r5;
-
+	
+											// Garantir que os pivos sao diferentes
 	do {
 		r1 = rand() % right;
 		r2 = rand() % right;
@@ -73,6 +74,7 @@ void quickSortH2(int* q2, int left, int right) {
 	int pivots[] = {pivot1, pivot2, pivot3, pivot4, pivot5};
 	int indexes[] = {r1, r2, r3, r4, r5};
 	
+											// Insertion Sort nos pivos
 	for (int i = 0; i < 5; i++) {
 		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) {
 			swap(pivots[j], pivots[j - 1]);	
@@ -80,7 +82,9 @@ void quickSortH2(int* q2, int left, int right) {
 		}
 	}
 	
+											// Primeiro pivo passa a ser o primeiro
 	swap(q2[left], q2[indexes[2]]);
+											// Segundo pivo passa a ser o ultimo
 	swap(q2[right], q2[indexes[4]]);
 
 		
@@ -110,23 +114,20 @@ void quickSortH2(int* q2, int left, int right) {
 /* QUICKSORT 1 */
 /***************/
 
-int partition1(int* q1, int p,int q) {
+int partition1(int* q1, int left,int right) {
 
-    int x= q1[p];
-    int i=p;
+    int x= q1[left];
+    int i=left;
     int j;
 
-	for(j=p+1; j<q; j++) {
-    
+	for(j=left+1; j<right; j++) {
 		if(q1[j]<=x){
-        
             i=i+1;
             swap(q1[i],q1[j]);
         }
-
     }
 
-    swap(q1[i],q1[p]);
+    swap(q1[i],q1[left]);
     return i;
 }
 
@@ -141,32 +142,48 @@ void quickSort1(int* q1, int left,int right) {
 }
 
 
-/***************/
+/****************/
 /* QUICKSORT H1 */
-/***************/
+/****************/
 
 int partitionH1(int* q1, int left,int right) {
 
+    int x= q1[left];
     int i=left;
-    int j, x;
+    int j;	
 	int pivot1, pivot2, pivot3;
+	int r1, r2, r3;
 
-											// Escolha de pivos aleatoria
+											// Garantir que os pivos sao diferentes
 	do {
-		pivot1 = q1[rand() % right];
-		pivot2 = q1[rand() % right];
-		pivot3 = q1[rand() % right];
+		r1 = rand() % right;
+		r2 = rand() % right;
+		r3 = rand() % right;
+		pivot1 = q1[r1];
+		pivot2 = q1[r2];
+		pivot3 = q1[r3];
 	} while(pivot1 == pivot2 || pivot2 == pivot3 || pivot3 == pivot1);
-	
+
 	int pivots[] = {pivot1, pivot2, pivot3};
-											// Insertion Sort nos pivos
-	for (int i = 1; i <= 3; i++) 
-		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) 
-			swap(pivots[j], pivots[j - 1]);
+	int indexes[] = {r1, r2, r3};
 	
-	for(j=left+1; j<right; j++) 
-		if(q1[j]<=pivots[2])
-            swap(q1[i++],q1[j]);
+											// Insertion Sort nos pivos
+	for (int i = 0; i < 3; i++) {
+		for (int j = i; j > 0 && pivots[j] < pivots[j - 1]; j--) {
+			swap(pivots[j], pivots[j - 1]);	
+			swap(indexes[j], indexes[j - 1]);
+		}
+	}
+	
+											// Pivo passa a ser o primeiro
+	swap(q1[left], q1[indexes[2]]);
+
+	for(j=left+1; j<right; j++) {
+		if(q1[j]<=x){
+            i=i+1;
+            swap(q1[i],q1[j]);
+        }
+    }
 
     swap(q1[i],q1[left]);
     return i;
@@ -186,11 +203,15 @@ void quickSortH1(int* q1, int left,int right) {
 	
     int div;
 	if(left < right) {
-        div = partitionH1(q1, left, right);	// Particiona
-        quickSortH1(q1, left, div);  		// Subarrays
-        quickSortH1(q1, div+1, right);
+        div = partition1(q1, left, right);	// Particiona
+        quickSort1(q1, left, div);  		// Subarrays
+        quickSort1(q1, div+1, right);
     }
 }
+
+/********/
+/* Main */
+/********/
 
 int main() {
 		
