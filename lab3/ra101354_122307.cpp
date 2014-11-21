@@ -26,7 +26,7 @@ void quickSortH2(int q2[], int left, int right, int div) {
 	}
 	int third = len / div;
 
-	// "medians"
+								// Tira as medias
 	int m1 = left  + third;
 	int m2 = right - third;
 
@@ -44,7 +44,8 @@ void quickSortH2(int q2[], int left, int right, int div) {
 		swap(q2[m1], q2[right]);
 		swap(q2[m2], q2[left]);
 	}
-	// pivots
+	
+								// Calcula os Pivos de forma aleatoria
 	do {
 		pivot1 = q2[rand() % (sizeof(q2)/sizeof(int))];
 		pivot2 = q2[rand() % (sizeof(q2)/sizeof(int))];
@@ -84,11 +85,11 @@ void quickSortH2(int q2[], int left, int right, int div) {
 	
 	
 	
-	// pointers
+								// Ponteiros
 	int less  = left  + 1;
 	int great = right - 1;
 
-	// sorting
+								// Ordenacao
 	for (int k = less; k <= great; k++) {
 		if (q2[k] < pivots[2]) {
 			swap(q2[k], q2[less++]);
@@ -104,7 +105,8 @@ void quickSortH2(int q2[], int left, int right, int div) {
 			}
 		}
 	}
-	// swaps
+	
+								// Trocas
 	int dist = great - less;
 
 	if (dist < 13) {
@@ -113,11 +115,11 @@ void quickSortH2(int q2[], int left, int right, int div) {
 	swap(q2[less  - 1], q2[left]);
 	swap(q2[great + 1], q2[right]);
 
-	// subarrays
+								// Subarrays
 	quickSortH2(q2, left,   less - 2, div);
 	quickSortH2(q2, great + 2, right, div);
 
-	// equal elements
+								// Elementos de mesmo valor
 	if (dist > len - 13 && pivots[2] != pivots[4]) {
 		for (int k = less; k <= great; k++) {
 			if (q2[k] == pivots[2]) {
@@ -132,7 +134,8 @@ void quickSortH2(int q2[], int left, int right, int div) {
 			}
 		}
 	}
-	// subarray
+	
+								// Subarrays
 	if (pivots[2] < pivots[4]) {
 		quickSortH2(q2, less, great, div);
 	}
@@ -157,7 +160,7 @@ void quickSort2(int q2[], int left, int right, int div) {
 	}
 	int third = len / div;
 
-	// "medians"
+ 								// Tira as medias
 	int m1 = left  + third;
 	int m2 = right - third;
 
@@ -175,15 +178,16 @@ void quickSort2(int q2[], int left, int right, int div) {
 		swap(q2[m1], q2[right]);
 		swap(q2[m2], q2[left]);
 	}
-	// pivots
+	
+								// Calcula os Pivos
 	int pivot1 = q2[left];
 	int pivot2 = q2[right];
 
-	// pointers
+								// Ponteiros
 	int less  = left  + 1;
 	int great = right - 1;
 
-	// sorting
+								// Ordenacao
 	for (int k = less; k <= great; k++) {
 		if (q2[k] < pivot1) {
 			swap(q2[k], q2[less++]);
@@ -208,11 +212,11 @@ void quickSort2(int q2[], int left, int right, int div) {
 	swap(q2[less  - 1], q2[left]);
 	swap(q2[great + 1], q2[right]);
 
-	// subarrays
+								// Subarrays
 	quickSort2(q2, left,   less - 2, div);
 	quickSort2(q2, great + 2, right, div);
 
-	// equal elements
+								// Elementos de mesmo valor
 	if (dist > len - 13 && pivot1 != pivot2) {
 		for (int k = less; k <= great; k++) {
 			if (q2[k] == pivot1) {
@@ -227,7 +231,8 @@ void quickSort2(int q2[], int left, int right, int div) {
 			}
 		}
 	}
-	// subarray
+
+								// Subarrays
 	if (pivot1 < pivot2) {
 		quickSortH2(q2, less, great, div);
 	}
@@ -262,8 +267,8 @@ void quickSort1(int q1[], int left,int right) {
 	
     int div;
 	if(left < right) {
-        div = partition1(q1, left, right);
-        quickSort1(q1, left, div);  
+        div = partition1(q1, left, right);	// Particiona
+        quickSort1(q1, left, div);  		// Subarrays
         quickSort1(q1, div+1, right);
     }
 }
@@ -279,6 +284,7 @@ int partitionH1(int q1[], int p,int q) {
     int j, x;
 	int pivot1, pivot2, pivot3;
 
+											// Escolha de pivos aleatoria
 	do {
 		pivot1 = q1[rand() % (sizeof(q1)/sizeof(int))];
 		pivot2 = q1[rand() % (sizeof(q1)/sizeof(int))];
@@ -309,7 +315,7 @@ int partitionH1(int q1[], int p,int q) {
 void quickSortH1(int q1[], int left,int right) {
 	
 	int len = right - left;
-	if (len < 27) {
+	if (len < 27) {							// Insertion Sort
             for (int i = left + 1; i <= right; i++) {
                 for (int j = i; j > left && q1[j] < q1[j - 1]; j--) {
                     swap(q1[j], q1[j - 1]);
@@ -320,8 +326,8 @@ void quickSortH1(int q1[], int left,int right) {
 	
     int div;
 	if(left < right) {
-        div = partitionH1(q1, left, right);
-        quickSortH1(q1, left, div);  
+        div = partitionH1(q1, left, right);	// Particiona
+        quickSortH1(q1, left, div);  		// Subarrays
         quickSortH1(q1, div+1, right);
     }
 }
