@@ -181,6 +181,10 @@ uint A2(uint n, vector<vector<uint> > M, vector<int> grau, uint *seq_vert_ci2, u
    */
 
   chamadas++;
+	cout<<((clock()-tempo) / CLOCKS_PER_SEC);
+	cout<<endl;
+	cout<<tempo_maximo;
+	cout<<endl;
   if(((clock()-tempo) / CLOCKS_PER_SEC) > tempo_maximo)
   {
 	  otimo = 0;
