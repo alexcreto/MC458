@@ -23,6 +23,25 @@ int knapSack(int W, int wt[], int val[], int n)
 }*/
 
 
+ITALO
+	Te explicar como que ta a logica dele.
+	Ele recebe os paranaues e trabalha por recursao. Primeira coisa é checar se == 0.
+	Se não for, ele avalia se o cliente em questão cabe na capacidade. Tem um for que avalia
+	se as necessidades do cara cabem. Se não couber, ele da um break e ja pula pro proximo.
+	Se o cara couber, ele forka. Avalia a soma dos lucros com e sem o cara. Eu não consegui
+	fazer ele funcionar com o código de baixo. O que ainda precisa ser feito é o código
+	levar em consideração as classes dos clientes.
+	Para saber com qual cliente trabalhar, ele sempre pega o último cliente da lista, 
+	total_usuarios-1. Portanto, na proxima chamada, ele manda um total-usuarios-1, para que 
+	na proxima chamada, o codigo pegue o penultimo.
+	PS: eu fiz cpp, mas o codigo ta mais c que c++. Ve aí o que voce prefere e boas.
+		
+	Onde ta os bugs? Eu acredito que tem a ver com a chamada do somaLucro. Não sei se ela 
+	ta recebendo direito os paranaues. Eu tambem nao avaliei direito se o fluxo ta seguindo 
+	o caminho correto.
+		
+	Boa sorte!
+
 // Retorna o máximo dentre 2 inteiros
 double max(double a, double b) { return (a > b)? a : b; }
 
