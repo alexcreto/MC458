@@ -1,0 +1,40 @@
+gcc gera_instancias_energia.c -o gera_instancias_energia
+gcc -O3 principal.c energia.c -o energia
+
+gera_instancias_energia 5 10  3 > E_05_10_03.txt
+gera_instancias_energia 5 12  3 > E_05_12_03.txt
+gera_instancias_energia 5 15  3 > E_05_15_03.txt
+gera_instancias_energia 5 20  3 > E_05_20_03.txt
+gera_instancias_energia 5 20  5 > E_05_20_05.txt
+gera_instancias_energia 5 25  5 > E_05_25_05.txt
+gera_instancias_energia 5 30 10 > E_05_30_10.txt
+gera_instancias_energia 5 50 10 > E_05_50_10.txt
+
+gera_instancias_energia 7 10  3 > E_07_10_03.txt
+gera_instancias_energia 7 12  3 > E_07_12_03.txt
+gera_instancias_energia 7 15  3 > E_07_15_03.txt
+gera_instancias_energia 7 20  3 > E_07_20_03.txt
+gera_instancias_energia 7 20  5 > E_07_20_05.txt
+gera_instancias_energia 7 25  5 > E_07_25_05.txt
+gera_instancias_energia 7 30 10 > E_07_30_10.txt
+gera_instancias_energia 7 50 10 > E_07_50_10.txt
+
+gera_instancias_energia 10 10  3 > E_10_10_03.txt
+gera_instancias_energia 10 12  3 > E_10_12_03.txt
+gera_instancias_energia 10 15  3 > E_10_15_03.txt
+gera_instancias_energia 10 20  3 > E_10_20_03.txt
+gera_instancias_energia 10 20  5 > E_10_20_05.txt
+gera_instancias_energia 10 25  5 > E_10_25_05.txt
+gera_instancias_energia 10 30 10 > E_10_30_10.txt
+gera_instancias_energia 10 50 10 > E_10_50_10.txt
+
+gera_instancias_energia 12 10  3 > E_12_10_03.txt
+gera_instancias_energia 12 12  3 > E_12_12_03.txt
+gera_instancias_energia 12 15  3 > E_12_15_03.txt
+gera_instancias_energia 12 20  3 > E_12_20_03.txt
+gera_instancias_energia 12 20  5 > E_12_20_05.txt
+gera_instancias_energia 12 25  5 > E_12_25_05.txt
+gera_instancias_energia 12 30 10 > E_12_30_10.txt
+gera_instancias_energia 12 50 10 > E_12_50_10.txt
+rm -f gera_instancias_energia
+rm -f energia
