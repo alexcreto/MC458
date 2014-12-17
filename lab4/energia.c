@@ -19,16 +19,6 @@ void ImprimeEntrada(int m, int n, int E[M], int U[N][M], double V[N], int C[N], 
     for(int j=0; j<m;j++)  printf("%3d ",U[i][j]); 
     printf("\n"); }
 }
-
-
-/*
-double Energia(int m,int n,int E[M],int U[N][M],double V[N],int C[N],int A[N])
-{
-
-  ImprimeEntrada(m,n,E,U,V,C,A); // Descomente para ver a impressao da entrada que leu
-  return 0.0;
-}
-*/
   
 // Retorna o máximo dentre 2 inteiros
 double max(double a, double b) { return (a > b)? a : b; }
@@ -43,16 +33,15 @@ double somaLucro(double lucro[N], int usuarios_atend[N]) {
   printf("%f\n", soma);
   return soma;
 }
-
   
 double EnergiaAux(int total_periodo, int total_usuario, int *quant_energ_periodo, int energia_usuario_periodo[][M], double *lucro, int *classes, int *usuarios_atend){
 
   int i;
-  int quant_energia_aux[M], usuarios_atend_aux[N];
+  int quant_energia_aux[total_periodo], usuarios_atend_aux[N];
   double res_com_elemento, res_sem_elemento;
   
   //Esse for foi adicionado pra conferir tds os periodos(mochilas) de uma soh vez
-  for(i = 0; i < M; i++){
+  for(i = 0; i < total_periodo; i++){
     //Caso nao haja usuarios disponiveis ou nao ha mais energia para vender
     if(total_usuario < 0 || quant_energ_periodo[i] <= 0)
       return 0;
@@ -90,15 +79,9 @@ double EnergiaAux(int total_periodo, int total_usuario, int *quant_energ_periodo
 }
 
 double Energia(int m, int n, int E[M], int U[N][M], double V[N], int C[N], int A[N]){
-
-  int j;
-  double resp;
-
-  //Um loop dentre todos os periodos disponiveis
-  resp = EnergiaAux(m-1, n-1, E, U, V, C, A);
-  printf("%lf\n", resp);
-  for(j = 0; j < m; j++)
-    printf("%d ", A[j]);
-  printf("\n");
-  return resp;
+	
+	//ImprimeEntrada(m,n,E,U,V,C,A); // Descomente para ver a impressao da entrada que leu
+	
+	// Preferimos trabalhar com variaveis cujo nome era reconhecivel
+  return EnergiaAux(m, n, E, U, V, C, A);
 }
