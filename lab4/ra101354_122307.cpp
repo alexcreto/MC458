@@ -1,8 +1,8 @@
 #include<stdio.h>
 
-#define N 5 //Usuarios
-#define M 5 //Periodos
-
+#define N 10 //Usuarios
+#define M 12 //Periodos
+//int N = 1;
 /*
 // Returns the maximum value that can be put in a knapsack of capacity W
 int knapSack(int W, int wt[], int val[], int n)
@@ -68,7 +68,7 @@ double somaLucro(double lucro[N], int usuarios_atend[N]) {
   // //Ajusta alguns vetores auxiliares pq se passar por referencia vira um rolo soh
   // quant_energia_aux[total_periodo] = quant_energ_periodo[total_periodo] - energia_usuario_periodo[total_usuario][total_periodo];
 
-double EnergiaAux(int total_periodo, int total_usuario, int *quant_energ_periodo, int energia_usuario_periodo[][N], double *lucro, int *classes, int *usuarios_atend){
+double EnergiaAux(int total_periodo, int total_usuario, int *quant_energ_periodo, int energia_usuario_periodo[][M], double *lucro, int *classes, int *usuarios_atend){
 
   int j, i;
   int quant_energia_aux[M], usuarios_atend_aux[N];
@@ -113,13 +113,13 @@ double EnergiaAux(int total_periodo, int total_usuario, int *quant_energ_periodo
 }
 
 
-double Energia(int total_periodo, int total_usuario, int *quant_energ_periodo, int energia_usuario_periodo[][N], double *lucro, int *classes, int *usuarios_atend){
+double Energia(int total_periodo, int total_usuario, int *quant_energ_periodo, int energia_usuario_periodo[][M], double *lucro, int *classes, int *usuarios_atend){
 
   int j;
 
   //Um loop dentre todos os periodos disponiveis
   printf("%lf\n", EnergiaAux(total_periodo-1, total_usuario-1, quant_energ_periodo, energia_usuario_periodo, lucro, classes, usuarios_atend));
-  for(j = 0; j < total_periodo; j++)
+  for(j = 0; j < N; j++)
     printf("%d ", usuarios_atend[j]);
   printf("\n");
 }
@@ -172,13 +172,27 @@ double Energia(int total_periodo, int total_usuario, int *quant_energ_periodo, i
  
 int main()
 {
-  double lucro[N] = {60, 100, 120, 40, 20};
-  int quant_energ_periodo[M] = {10, 20, 30, 20, 10};
-  int energia_usuario_periodo[N][M] = {{2,3,4,5,3}, {1,1,1,1,1}, {5,4,3,4,5}, {3,3,3,3,3}, {1,3,5,3,1}};
-  int classes[N] = {1,2,1,2,1};
-  int usuarios_atend[N] = {0,0,0,0,0};
 
+  int Ms, Ns;
+  double lucro[N];// = {60, 100, 120, 40, 20};
+  int quant_energ_periodo[M];// = {10, 20, 30, 20, 10};
+  int energia_usuario_periodo[N][M];// = {{2,3,4,5,3}, {1,1,1,1,1}, {5,4,3,4,5}, {3,3,3,3,3}, {1,3,5,3,1}};
+  int classes[N];// = {1,2,1,2,1};
+  int usuarios_atend[N];// = {0,0,0,0,0};
 
+  //Parseia arquivo de entrada do Professor mesmo pegando o M -> Ms e N->Ns tem q mudar o valor dos defines la em cima
+  scanf("%d %d", &Ms, &Ns);
+  int i, j;
+  for(i = 0; i < M; i++)
+    scanf("%d", &quant_energ_periodo[i]);
+  for(i = 0; i < N; i++){
+    scanf("%lf %d", &lucro[i], &classes[i]);
+    usuarios_atend[i] = 0;
+    for(j = 0; j < M; j++)
+      scanf("%d", &energia_usuario_periodo[i][j]);
+  }
+  
+  //printf("%d ", Ms);
   //primeiro teste com problema simples (uma mochila sem classes) FUNCIONA
   //printf("%f\n", Energia(0, 5, quant_energ_periodo, energia_usuario_periodo, lucro, classes, usuarios_atend));
 
@@ -191,7 +205,9 @@ int main()
   //Energia(5, 5, quant_energ_periodo, energia_usuario_periodo, lucro, classes, usuarios_atend);
 
   //Quarto teste com problema completo e retornando usuarios   FUNCIONA
-  Energia(5, 5, quant_energ_periodo, energia_usuario_periodo, lucro, classes, usuarios_atend);
+  //Energia(5, 5, quant_energ_periodo, energia_usuario_periodo, lucro, classes, usuarios_atend);
+
+  Energia(Ms, Ns, quant_energ_periodo, energia_usuario_periodo, lucro, classes, usuarios_atend);
 
   //TODO testar pra ver se realmente funciona :D
 
